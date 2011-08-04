@@ -1,0 +1,567 @@
+
+-------- 080406 Working
+
+Handler::SetLogLevel 0c6aa434 0
+  Set log level 1
+Handler::SetLogLevel 0c6aa434 1
+--> Got the message 1 (0cc82580): 68 bytes (0cc82454) 
+BluntServer::HandleCommand 0
+  Connect: 3
+BluntServer::SetupProtocolStack
+BluntServer::SetupHCILayer
+  HCI: 0c6ad4d0
+BluntServer::AddHandler: 0c6ad4d0
+BluntServer::SetupL2CAPLayer
+ L2CAP control: 0c6a7ec4
+ L2CAP data: 0c6bf6b4 S: 64 Prot: 3
+BluntServer::SetupRFCOMMLayer 00010b62
+ RFCOMM control: 0c6a5bbc
+ RFCOMM data: 0c6a5d9c Port: 10
+RFCOMM::Connect (0c6a5d9c)
+L2CAP::Connect 0c6bf6b4
+HCI::CreateConnection a6:62:02:57:00:01
+BluntServer::StartOutput (300 283)
+ Sent 16 bytes (300 299 left)
+BluntServer::Print
+    HCI (ffffffff) (0c6aa434) states: 11 3
+    HCI (ffffffff) (0c6ad4d0) states: 11 3
+        L2CAP (0c6a7ec4) states: 1 27922588
+        L2CAP (0c6bf6b4) states: 1 3
+            RFCOMM (0c6a5bbc) states: 5 3
+            RFCOMM (0c6a5d9c) states: 5 3
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 49 56
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x0f
+HCI::Transition (0c6aa434) 11 0f -> 6
+HCI::Action (0c6aa434) 11 6
+  Connect status: 0
+New state: 11
+  Done 56 56
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 56 70
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x03
+HCI::Transition (0c6aa434) 11 03 -> 7
+HCI::Action (0c6aa434) 11 7
+  Connection complete: 0
+HCI::CompleteConnection 0001
+3 0c6ad581 0c6aa539
+HCI Handler: 0c6ad4d0
+L2CAP::SndConnectionRequest 3 0c6a7ec4
+  Check: 0c6bf6b4 3 3
+  Sending (0c6bf6b4) ID: 2 CID: 64
+HCI::SndPacketHeader
+ 0001 12 (1)
+BluntServer::StartOutput (317 300)
+ Sent 16 bytes (317 316 left)
+BluntServer::SetTimer 0c6a7ec4 (2) 2000
+New state: 1
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x1b
+HCI::Transition (0c6ad4d0) 1 1b -> 27
+HCI::Action (0c6ad4d0) 1 25
+New state: 1
+  Done 76 76
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 76 76
+  Done 76 76
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 76 97
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (16)
+  CID: 0001 0001
+  Flags: 16 0 2
+  F: Length: 12 (12) CID: 0001
+L2CAP::ProcessACLEvent (2 2 2 3)
+L2CAP::Transition (0c6a7ec4) 2 03 -> 0
+L2CAP::Action (0c6a7ec4) 2 1
+L2CAP::ConnectionResponse (1 2)
+D: 64 S: 64
+L2CAP::GetHandler 64  1 (0c6bf6b4) 64
+New state: 2
+  Done 97 97
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 97 118
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (16)
+  CID: 0001 0001
+  Flags: 16 0 2
+  F: Length: 12 (12) CID: 0001
+L2CAP::ProcessACLEvent (2 2 2 3)
+L2CAP::Transition (0c6a7ec4) 2 03 -> 0
+L2CAP::Action (0c6a7ec4) 2 1
+L2CAP::ConnectionResponse (0 2)
+D: 64 S: 64
+L2CAP::GetHandler 64  1 (0c6bf6b4) 64
+  L2CAP: 0c6bf6b4 64
+L2CAP::SndConfigureRequest (Id 3, 64)
+HCI::SndPacketHeader
+ 0001 16 (2)
+BluntServer::StartOutput (338 317)
+ Sent 16 bytes (338 333 left)
+New state: 3
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (16)
+  CID: 0001 0001
+  Flags: 16 0 2
+  F: Length: 12 (12) CID: 0001
+L2CAP::ProcessACLEvent (3 3 3 4)
+L2CAP::Transition (0c6a7ec4) 3 04 -> 3
+L2CAP::Action (0c6a7ec4) 3 2
+L2CAP::ConfigureRequest (64)
+L2CAP::GetHandler 64  1 (0c6bf6b4) 64
+  ID: 3 Length: 4 MTU: 32767 
+L2CAP::SndConfigureResponse (Id 3, 64)
+  Accepting MTU 32767
+HCI::SndPacketHeader
+ 0001 18 (3)
+BluntServer::StartOutput (361 338)
+ Sent 16 bytes (361 354 left)
+New state: 4
+  Done 139 139
+BluntServer::StartOutput (361 354)
+ Sent 0 bytes (361 354 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 139 139
+  Done 139 139
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 139 158
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (14)
+  CID: 0001 0001
+  Flags: 14 0 2
+  F: Length: 10 (10) CID: 0001
+L2CAP::ProcessACLEvent (3 3 3 5)
+L2CAP::Transition (0c6a7ec4) 4 05 -> 5
+L2CAP::Action (0c6a7ec4) 4 3
+L2CAP::ConfigureResponse
+L2CAP::GetHandler 64  1 (0c6bf6b4) 64
+  Length 6 Flags: 0000 Result: 0
+L2CAP::CompleteConnection (0c6bf6b4) 2
+Handler: 0c6a5bbc 4 3
+  Continue with 0c6a5bbc (4)
+Handler: 0c6a5d9c 4 3
+  Continue with 0c6a5d9c (4)
+RFCOMM::Connect (0c6a5d9c)
+RFCOMM::SndSetAsynchronousBalancedMode 0c6a5bbc (0)
+RFCOMM::SndData
+HCI::SndPacketHeader
+ 0001 8 (4)
+BluntServer::StartOutput (374 361)
+ Sent 13 bytes (374 374 left)
+New state: 1
+  Done 158 158
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 158 171
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (8)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (8)
+  CID: 0040 0040
+  Flags: 8 0 2
+  F: Length: 4 (4) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (0 0)
+ Address: 0 Control: 63 MPX: 135, Length: 0
+RFCOMM::Transition (0c6a5bbc) 1 63 -> 0
+RFCOMM::Action (0c6a5bbc) 1 1
+RFCOMM::UnnumberedAcknowlegdement (0)
+RFCOMM::MPXConnected (0c6a5bbc)
+  1 10 3
+  Connecting 0c6a5d9c (10)
+RFCOMM::SndMPXParameterNegotiation (1 20 384)
+RFCOMM::SndData
+HCI::SndPacketHeader
+ 0001 18 (5)
+BluntServer::StartOutput (397 374)
+ Sent 16 bytes (397 390 left)
+New state: 2
+  Done 171 171
+BluntServer::StartOutput (397 390)
+ Sent 0 bytes (397 390 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 171 179
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x13
+HCI::Transition (0c6aa434) 1 13 -> 28
+HCI::Action (0c6aa434) 1 22
+HCI::TrackCompletedPackets
+  Handler 1 (0001): 0 outstanding
+BluntServer::StartOutput (397 397)
+ Sent 0 bytes (397 397 left)
+New state: 1
+  Done 179 179
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 179 202
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (18)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (18)
+  CID: 0040 0040
+  Flags: 18 0 2
+  F: Length: 14 (14) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (0 0)
+ Address: 0 Control: ef MPX: 120, Length: 10
+RFCOMM::Transition (0c6a5bbc) 2 120 -> 1
+RFCOMM::Action (0c6a5bbc) 2 2
+RFCOMM::MPXParameterNegotiation 0
+RFCOMM::HandlerFromDLCI (0c6a5bbc) 20 0c6a5d9c
+  DLCI: 20 Flow: 00 Frame size: 384, Window: 0
+RFCOMM::SndSetAsynchronousBalancedMode 0c6a5d9c (20)
+RFCOMM::SndData
+HCI::SndPacketHeader
+ 0001 8 (1)
+BluntServer::StartOutput (410 397)
+ Sent 13 bytes (410 410 left)
+New state: 2
+  Done 202 202
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 202 202
+  Done 202 202
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 202 215
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (8)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (8)
+  CID: 0040 0040
+  Flags: 8 0 2
+  F: Length: 4 (4) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (20 0)
+  Handler: 1 0c6a5d9c
+RFCOMM::HandleData 0c6bf75a (20 20)
+ Address: 20 Control: 63 MPX: 00, Length: 0
+RFCOMM::Transition (0c6a5d9c) 3 63 -> 3
+RFCOMM::Action (0c6a5d9c) 3 3
+RFCOMM::SndMPXModemStatusCommand (20 1 1)
+RFCOMM::SndData
+HCI::SndPacketHeader
+ 0001 12 (2)
+BluntServer::StartOutput (427 410)
+ Sent 1 bytes (427 427 left)
+RFCOMM::CompleteConnection (0c6a5d9c)
+New state: 4
+  Done 215 215
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 215 232
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (12)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (12)
+  CID: 0040 0040
+  Flags: 12 0 2
+  F: Length: 8 (8) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (0 0)
+ Address: 0 Control: ef MPX: 138, Length: 4
+RFCOMM::Transition (0c6a5bbc) 2 138 -> 5
+RFCOMM::Action (0c6a5bbc) 2 8
+RFCOMM::MPXModemStatusCommand (20 0 0 0x8d)
+New state: 2
+  Done 232 232
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 232 249
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (12)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (12)
+  CID: 0040 0040
+  Flags: 12 0 2
+  F: Length: 8 (8) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (0 0)
+ Address: 0 Control: ef MPX: 138, Length: 4
+RFCOMM::Transition (0c6a5bbc) 2 138 -> 5
+RFCOMM::Action (0c6a5bbc) 2 8
+RFCOMM::MPXModemStatusCommand (20 1 0 0x8d)
+RFCOMM::SndMPXModemStatusCommand (20 1 0)
+RFCOMM::SndData
+HCI::SndPacketHeader
+ 0001 12 (3)
+BluntServer::StartOutput (444 427)
+ Sent 16 bytes (444 443 left)
+New state: 2
+  Done 249 249
+BluntServer::StartOutput (444 443)
+ Sent 0 bytes (444 443 left)
+--> Got the message 1 (0cc82580): 28 bytes (0cc82454) 
+BluntServer::HandleCommand 9
+  Send data
+BluntServer::SendData 0cc82580 4
+  MTU: 192, Len: 7 Pos: 0
+  Len: 7 Pos: 7
+RFCOMM::SndUnnumberedInformation (20 7)
+HCI::SndPacketHeader
+ 0001 15 (4)
+BluntServer::StartOutput (464 444)
+ Sent 16 bytes (464 460 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 249 269
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (15)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (15)
+  CID: 0040 0040
+  Flags: 15 0 2
+  F: Length: 11 (11) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (20 0)
+  Handler: 1 0c6a5d9c
+RFCOMM::HandleData 0c6bf75a (20 20)
+ Address: 20 Control: ef MPX: 00, Length: 7
+RFCOMM::Transition (0c6a5d9c) 4 ef -> 6
+RFCOMM::Action (0c6a5d9c) 4 5
+RFCOMM::UnnumberedInformation
+RFCOMM::ProcessRFCOMMData 7
+  Sending 7 bytes to tool 00010b62
+  Data sent.
+New state: 4
+  Done 269 269
+--> Got the message 3 (0cc82580): 48 bytes (0cc82454) 
+BluntServer::HandleTimer 0c6a7ec4
+L2CAP::HandleTimer
+L2CAP::Transition (0c6a7ec4) 1 ff -> New state: 1
+--> Got the message 1 (0cc82580): 28 bytes (0cc82454) 
+BluntServer::HandleCommand 9
+  Send data
+BluntServer::SendData 0cc82580 4
+  MTU: 192, Len: 77 Pos: 0
+  Len: 77 Pos: 77
+RFCOMM::SndUnnumberedInformation (20 77)
+HCI::SndPacketHeader
+ 0001 85 (5)
+BluntServer::StartOutput (554 464)
+ Sent 16 bytes (554 480 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 269 277
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x13
+HCI::Transition (0c6aa434) 1 13 -> 28
+HCI::Action (0c6aa434) 1 22
+HCI::TrackCompletedPackets
+  Handler 1 (0001): 0 outstanding
+BluntServer::StartOutput (554 554)
+ Sent 0 bytes (554 554 left)
+New state: 1
+  Done 277 277
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 277 293
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (11)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (11)
+  CID: 0040 0040
+  Flags: 11 0 2
+  F: Length: 7 (7) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (20 0)
+  Handler: 1 0c6a5d9c
+RFCOMM::HandleData 0c6bf75a (20 20)
+ Address: 20 Control: ef MPX: 00, Length: 3
+RFCOMM::Transition (0c6a5d9c) 4 ef -> 6
+RFCOMM::Action (0c6a5d9c) 4 5
+RFCOMM::UnnumberedInformation
+RFCOMM::ProcessRFCOMMData 3
+  Sending 3 bytes to tool 00010b62
+  Data sent.
+New state: 4
+  Done 293 293
+--> Got the message 1 (0cc82580): 28 bytes (0cc82454) 
+BluntServer::HandleCommand 9
+  Send data
+BluntServer::SendData 0cc82580 4
+  MTU: 192, Len: 319 Pos: 0
+  Len: 192 Pos: 192
+RFCOMM::SndUnnumberedInformation (20 192)
+HCI::SndPacketHeader
+ 0001 201 (1)
+BluntServer::StartOutput (760 554)
+ Sent 16 bytes (760 570 left)
+--> Got the message 1 (0cc82580): 28 bytes (0cc82454) 
+BluntServer::HandleCommand 9
+  Send data
+BluntServer::SendData 0cc82580 4
+  MTU: 192, Len: 319 Pos: 192
+  Len: 127 Pos: 319
+RFCOMM::SndUnnumberedInformation (20 127)
+HCI::SndPacketHeader
+ 0001 135 (2)
+BluntServer::StartOutput (900 760)
+ Sent 16 bytes (900 776 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 293 309
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (11)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (11)
+  CID: 0040 0040
+  Flags: 11 0 2
+  F: Length: 7 (7) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (20 0)
+  Handler: 1 0c6a5d9c
+RFCOMM::HandleData 0c6bf75a (20 20)
+ Address: 20 Control: ef MPX: 00, Length: 3
+RFCOMM::Transition (0c6a5d9c) 4 ef -> 6
+RFCOMM::Action (0c6a5d9c) 4 5
+RFCOMM::UnnumberedInformation
+RFCOMM::ProcessRFCOMMData 3
+  Sending 3 bytes to tool 00010b62
+  Data sent.
+New state: 4
+  Done 309 309
+--> Got the message 1 (0cc82580): 28 bytes (0cc82454) 
+BluntServer::HandleCommand 9
+  Send data
+BluntServer::SendData 0cc82580 4
+  MTU: 192, Len: 3 Pos: 0
+  Len: 3 Pos: 3
+RFCOMM::SndUnnumberedInformation (20 3)
+HCI::SndPacketHeader
+ 0001 11 (3)
+BluntServer::StartOutput (916 900)
+ Sent 16 bytes (916 916 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 309 325
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (11)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (11)
+  CID: 0040 0040
+  Flags: 11 0 2
+  F: Length: 7 (7) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (20 0)
+  Handler: 1 0c6a5d9c
+RFCOMM::HandleData 0c6bf75a (20 20)
+ Address: 20 Control: ef MPX: 00, Length: 3
+RFCOMM::Transition (0c6a5d9c) 4 ef -> 6
+RFCOMM::Action (0c6a5d9c) 4 5
+RFCOMM::UnnumberedInformation
+RFCOMM::ProcessRFCOMMData 3
+  Sending 3 bytes to tool 00010b62
+  Data sent.
+New state: 4
+  Done 325 325
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 325 342
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (12)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (12)
+  CID: 0040 0040
+  Flags: 12 0 2
+  F: Length: 8 (8) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (0 0)
+ Address: 0 Control: ef MPX: 138, Length: 4
+RFCOMM::Transition (0c6a5bbc) 2 138 -> 5
+RFCOMM::Action (0c6a5bbc) 2 8
+RFCOMM::MPXModemStatusCommand (20 1 0 0x8f)
+RFCOMM::SndMPXModemStatusCommand (20 1 0)
+RFCOMM::SndData
+HCI::SndPacketHeader
+ 0001 12 (4)
+BluntServer::StartOutput (933 916)
+ Sent 16 bytes (933 932 left)
+New state: 2
+  Done 342 342
+BluntServer::StartOutput (933 932)
+ Sent 0 bytes (933 932 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 342 355
+>>> HCI 0c6ad4d0 handling, state 7 Event code: 0x01
+HCI::ProcessACLData
+L2CAP Handler: 0 0c6a7ec4
+L2CAP::HandleData 0c6a7ec4 (8)
+  CID: 0001 0040
+L2CAP Handler: 1 0c6bf6b4
+L2CAP::HandleData 0c6bf6b4 (8)
+  CID: 0040 0040
+  Flags: 8 0 2
+  F: Length: 4 (4) CID: 0040
+L2CAP::ProcessL2CAPData
+  Handler: 0 0c6a5bbc
+RFCOMM::HandleData 0c6bf75a (20 0)
+  Handler: 1 0c6a5d9c
+RFCOMM::HandleData 0c6bf75a (20 20)
+ Address: 20 Control: 43 MPX: 11f, Length: 0
+RFCOMM::Transition (0c6a5d9c) 4 43 -> New state: 4
+  Done 355 355
+--> Got the message 1 (0cc82580): 28 bytes (0cc82454) 
+BluntServer::HandleCommand 1
+  Disconnect: 0001HCI::Disconnect (0c6ad4d0) 0001
+BluntServer::StartOutput (940 933)
+ Sent 7 bytes (940 940 left)
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 355 362
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x0f
+HCI::Transition (0c6aa434) 1 0f -> New state: 1
+  Done 362 362
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 362 376
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x05
+HCI::Transition (0c6aa434) 1 05 -> 8
+HCI::Action (0c6aa434) 1 11
+HCI::CompleteDisconnect 0001
+HCI::GetHandler 0001
+BluntServer::DeferredRemoveHandler 0c6ad4d0
+New state: 1
+>>> HCI 0c6aa434 handling, state 3 Event code: 0x0e
+HCI::Transition (0c6aa434) 1 0e -> New state: 1
+  Done 376 376
+BluntServer::RemoveHandler 0c6ad4d0
+HCI::~HCI
+L2CAP::~L2CAP
+L2CAP::~L2CAP
+BluntServer::Print
+    HCI (ffffffff) (0c6aa434) states: 1 3
+--> Got the message 0 (0cc82580): 0 bytes (0cc82454) 
+BluntServer::HandleData 376 376
+  Done 376 376

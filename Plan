@@ -1,0 +1,12 @@
+Server
+- Data sending
+- Data receiving
+- Disconnect parent handler only if no other handlers are active
+
+Bluetooth Setup
+- Add client interface
+- Timeout and cancel for get services
+
+Link key saving and sending
+
+Testing OBEX: Abort when sending, PutComplete causes -16005?

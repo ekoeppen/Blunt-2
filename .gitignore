@@ -1,0 +1,13 @@
+*.o
+Bluetooth Setup
+*.pkg
+*.ntkc
+*.sym
+*.tmproj
+*.xcodeproj
+Objects
+Makeout
+.svn
+.DS_Store
+Makefile
+Makefile.nct
