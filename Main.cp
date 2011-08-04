@@ -12,7 +12,7 @@ extern "C" Ref MStart (RefArg rcvr, RefArg location, RefArg driver, RefArg speed
 	UChar* pc;
 	ULong l;
 	
-	printf("----------------------------------------------------------\n");
+	printf("--- Starting -------------------------------------------------------\n");
 	WITH_LOCKED_BINARY(location, p);
 		pc = (UChar *) p; l = (pc[1] << 24) + (pc[3] << 16) + (pc[5] << 8) + pc[7];
 	END_WITH_LOCKED_BINARY(location);
