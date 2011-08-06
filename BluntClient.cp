@@ -9,7 +9,7 @@ extern "C" _sys_write (int fd, char* data, int len);
 
 BluntClient::BluntClient (RefArg blunt, TObjectId server)
 {
-	fLogLevel = 0;
+	fLogLevel = 1;
 	HLOG (1, "BluntClient::BluntClient\n");
 	Init (kBluntEventId, kBluntEventClass);
 	fBlunt = new RefStruct (blunt);
@@ -237,7 +237,12 @@ void BluntClient::Log (int logLevel, char *format, ...)
         va_start (args, format);
         vsprintf (buffer, format, args);
         va_end (args);
+#ifdef USE_HAMMER_LOG
         _sys_write (1, buffer, strlen (buffer));
+#else
+        BluntLogCommand command ((UByte *) buffer, strlen (buffer));
+        fServerPort.Send (&command, sizeof (command), kNoTimeout, M_COMMAND);
+#endif
     }
 }
 
