@@ -29,15 +29,15 @@ typedef const RefVar& RefArg;
 
 typedef Ref (*MapSlotsFunction)(RefArg tag, RefArg value, ULong anything);
 
-extern Ref 	MakeInt(long i);
-extern Ref 	MakeChar(unsigned char c);
+extern Ref	MakeInt(long i);
+extern Ref	MakeChar(unsigned char c);
 extern Ref	MakeBoolean(int val);
 
-extern Boolean IsInt(RefArg r);	
+extern Boolean IsInt(RefArg r); 
 extern Boolean IsChar(RefArg r);	
 extern Boolean IsPtr(RefArg r);		
-extern Boolean IsMagicPtr(RefArg r);    
-extern Boolean IsRealPtr(RefArg r);   
+extern Boolean IsMagicPtr(RefArg r);	
+extern Boolean IsRealPtr(RefArg r);	  
 					
 extern long RefToInt(RefArg r);			
 extern UniChar RefToUniChar(RefArg r);		
@@ -68,7 +68,7 @@ extern "C" void ExitFIQAtomic (void);
 extern "C" void _EnterFIQAtomic (void);
 extern "C" void _ExitFIQAtomicFast (void);
 extern TUPort* GetNewtTaskPort (void);
-extern "C" long LockStack(TULockStack* lockRef, ULong additionalSpace);	// Lock the entire stack plus additionalSpace # of bytes
+extern "C" long LockStack(TULockStack* lockRef, ULong additionalSpace); // Lock the entire stack plus additionalSpace # of bytes
 extern "C" long UnlockStack(TULockStack* lockRef);
 extern "C" long LockHeapRange(VAddr start, VAddr end, Boolean wire);	// Lock range from start up to but not including end.  Wire will prevent v->p mappings from changing.
 extern "C" long UnlockHeapRange(VAddr start, VAddr end);
@@ -181,7 +181,7 @@ void BluntServer::DriverReset (void)
 	HLOG (1, "BluntServer::DriverReset (%d)\n", fDriver);
 	chip = (TSerialChip16450 *) fChip;
 	* (Long *) ((Byte*) (fChip) + 0x10) = 0;
-	HLOG (1, "  Features: %08x\n", fChip->GetFeatures ());
+	HLOG (1, "	Features: %08x\n", fChip->GetFeatures ());
 	fRxDMA = false;
 	fRxDMA = false;
 	if (fDriver == DRIVER_BT2000 || fDriver == DRIVER_PICO) {
@@ -229,7 +229,7 @@ void BluntServer::DriverReset (void)
 		HLOG (1, "Resetting module done.\n");
 		fRxDMA = false;
 		fTxDMA = false;
-    }
+	}
 	Wait (100);
 }
 
@@ -255,7 +255,7 @@ Handler::Handler ()
 	fNumHandlers = 0;
 	fServer = NULL;
 	fParentHandler = NULL;
-    fLogLevel = 0;
+	fLogLevel = 0;
 }
 
 Handler::~Handler ()
@@ -321,16 +321,16 @@ void Handler::SetLogLevel (Byte level[5])
 
 void Handler::Log (Long logLevel, char *format, ...)
 {
-    va_list args;
-    char buffer[128];
+	va_list args;
+	char buffer[128];
 	char *c;
-    
-    if (fLogLevel >= logLevel && fServer && fServer->fLogger) {
-        va_start (args, format);
-        vsprintf (buffer, format, args);
-        va_end (args);
+	
+	if (fLogLevel >= logLevel && fServer && fServer->fLogger) {
+		va_start (args, format);
+		vsprintf (buffer, format, args);
+		va_end (args);
 		fServer->fLogger->Output ((UByte*) buffer, strlen (buffer));
-    }
+	}
 }
 
 #pragma mark -
@@ -346,7 +346,7 @@ NewtonErr BluntServer::Initialize (ULong location, ULong driver, ULong speed, Lo
 	NewtonErr r = noErr;
 	int i;
 
-    fServer = this;
+	fServer = this;
 	fLogger = new Logger ();
 	fLogger->Initialize ();
 	fLogger->Main ();
@@ -391,32 +391,32 @@ void BluntServer::TxBEmptyIntHandler (void)
 	SerialStatus status;
 	
 	fSemaphore = 1;
-    EnterFIQAtomic ();
-    if (fTxDMA) {
-        if (fTxDMABuffer->BufferCount () > 0) {
-            fChip->TxDMAControl (kDMAStart);
-        } else {
-            fChip->ResetTxBEmpty ();
-        }
-    } else {
-        fChip->SetTxDTransceiverEnable (true);
-        if (fOutputHead == fOutputTail) {
-            fChip->ResetTxBEmpty ();
-        } else {
+	EnterFIQAtomic ();
+	if (fTxDMA) {
+		if (fTxDMABuffer->BufferCount () > 0) {
+			fChip->TxDMAControl (kDMAStart);
+		} else {
+			fChip->ResetTxBEmpty ();
+		}
+	} else {
+		fChip->SetTxDTransceiverEnable (true);
+		if (fOutputHead == fOutputTail) {
+			fChip->ResetTxBEmpty ();
+		} else {
 			while (fChip->TxBufEmpty () &&
 				fOutputHead != fOutputTail && 
 				(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
-            	c = fOutputBuffer[fOutputTail];
-	            fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
-    	        fChip->PutByte (c);
-        	}
+				c = fOutputBuffer[fOutputTail];
+				fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
+				fChip->PutByte (c);
+			}
 			status = fChip->GetSerialStatus ();
 			if (status & kSerialCTSAsserted == 0 || status & kSerialDSRAsserted == 0) {
 				HLOG (0, "SerialStatus: %08x\n", status);
 			}
 		}
-    }
-    ExitFIQAtomic ();
+	}
+	ExitFIQAtomic ();
 	fSemaphore = 0;
 }
 
@@ -481,8 +481,8 @@ long BluntServer::TaskConstructor ()
 	fOutputTail = 0;
 	fInputHead = 0;
 	fInputTail = 0;
-    fRxDMA = false;
-    fTxDMA = false;
+	fRxDMA = false;
+	fTxDMA = false;
 
 	LockHeapRange((VAddr) &::TxBEmptyIntHandler, (VAddr) &::__EndOfInterruptHandlers, true);
 	LockHeapRange((VAddr)this, (VAddr)((char*)this+sizeof(*this)), false);
@@ -524,7 +524,7 @@ long BluntServer::TaskConstructor ()
 	parms.fDataBits = k8DataBits;
 	parms.fSpeed = fSpeed;
 	fChip->SetIOParms (&parms);
-    fChip->SetSpeed (fSpeed);
+	fChip->SetSpeed (fSpeed);
 	fChip->SetIntSourceEnable (kSerIntSrcTxBufEmpty, true);
 	fChip->Reconfigure ();
 	fChip->SetInterruptEnable (true);
@@ -535,12 +535,12 @@ long BluntServer::TaskConstructor ()
 	if (fRxDMA) {
 		fRxDMABuffer->DMABufInfo (&n, NULL, NULL, NULL);
 		fChip->InitRxDMA (fRxDMABuffer, DMA_NOTIFY_LEVEL, RxDmaIntHandler);
-        fChip->RxDMAControl (kDMANotifyOnNext | kDMAStart);
+		fChip->RxDMAControl (kDMANotifyOnNext | kDMAStart);
 	}
 	if (fTxDMA) {
 		fTxDMABuffer->DMABufInfo (&n, NULL, NULL, NULL);
 		fChip->InitTxDMA (fTxDMABuffer, TxDmaIntHandler);
-        fChip->TxDMAControl (kDMANotifyOnNext | kDMAStart);
+		fChip->TxDMAControl (kDMANotifyOnNext | kDMAStart);
 	}
 	HLOG (1, "Chip configured, DMA: %d %d\n", fRxDMA, fTxDMA);
 	
@@ -586,11 +586,11 @@ void BluntServer::TaskDestructor ()
 		delete[] fOutputBuffer;
 	}
 	HLOG (0, "Done\n");
-    Sleep (3000 * kMilliseconds);
+	Sleep (3000 * kMilliseconds);
 	fLogger->Close ();
-    Sleep (100 * kMilliseconds);
+	Sleep (100 * kMilliseconds);
 	delete fLogger;
-    Sleep (100 * kMilliseconds);
+	Sleep (100 * kMilliseconds);
 }
 
 void BluntServer::TaskMain ()
@@ -627,34 +627,34 @@ void BluntServer::TaskMain ()
 void BluntServer::StartOutput ()
 {
 	UByte c;
-    ULong n;
-    int i;
+	ULong n;
+	int i;
 	
 	fBufferOutput = false;
 	if (fTxDMA) {
-        HLOG (1, "BluntServer::StartOutput (%d)\n", fTxDMABuffer->BufferCount ());
+		HLOG (1, "BluntServer::StartOutput (%d)\n", fTxDMABuffer->BufferCount ());
 		fChip->SetTxDTransceiverEnable (true);
-        fChip->TxDMAControl (kDMANotifyOnNext | kDMAStart);
-        HLOG (1, " Sent %d bytes (%d left)\n", i, fTxDMABuffer->BufferCount ());
+		fChip->TxDMAControl (kDMANotifyOnNext | kDMAStart);
+		HLOG (1, " Sent %d bytes (%d left)\n", i, fTxDMABuffer->BufferCount ());
 	} else {
-        HLOG (1, "BluntServer::StartOutput (%d %d)\n", fOutputHead, fOutputTail);
+		HLOG (1, "BluntServer::StartOutput (%d %d)\n", fOutputHead, fOutputTail);
 		fChip->SetTxDTransceiverEnable (true);
 		i = 0;
 		while (fChip->TxBufEmpty () &&
 			fOutputHead != fOutputTail &&
 			(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
-            i++;
-            c = fOutputBuffer[fOutputTail];
-            fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
+			i++;
+			c = fOutputBuffer[fOutputTail];
+			fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
 			fChip->PutByte (c);
-/*            
+/*			  
 			if (!fChip->TxBufEmpty ()) {
 				HLOG (1, "*** Send buffer full after %d bytes, %d %d remaining\n", i, fOutputHead, fOutputTail);
 			}
 */
 		}
 
-        HLOG (1, " Sent %d bytes (%d %d left)\n", i, fOutputHead, fOutputTail);
+		HLOG (1, " Sent %d bytes (%d %d left)\n", i, fOutputHead, fOutputTail);
 	}
 }
 
@@ -677,21 +677,21 @@ void BluntServer::Output (UByte* data, ULong size, Boolean packetStart)
 		fOutstandingPackets++;
 	}
 	
-    if (fTxDMA) {
-        n = size;
-        fTxDMABuffer->CopyIn (data, &n, false, 0);
-        processedBytes = size - n;
-        HLOG (2, " Buffered %d of %d bytes (%d free)\n", processedBytes, size, fTxDMABuffer->BufferSpace ());
-    } else {
-        for (i = 0; i < size; i++) {
-            fOutputBuffer[fOutputHead] = data[i];
-            fOutputHead = (fOutputHead + 1) % MAX_OUTPUT;
-            if (fOutputTail == fOutputHead) break;
-        }
-        if (fOutputTail == fOutputHead && size > 0) {
-            HLOG (0, "*** Output buffer overflow (%d of %d bytes written)\n", i, size);
-        }
-    }
+	if (fTxDMA) {
+		n = size;
+		fTxDMABuffer->CopyIn (data, &n, false, 0);
+		processedBytes = size - n;
+		HLOG (2, " Buffered %d of %d bytes (%d free)\n", processedBytes, size, fTxDMABuffer->BufferSpace ());
+	} else {
+		for (i = 0; i < size; i++) {
+			fOutputBuffer[fOutputHead] = data[i];
+			fOutputHead = (fOutputHead + 1) % MAX_OUTPUT;
+			if (fOutputTail == fOutputHead) break;
+		}
+		if (fOutputTail == fOutputHead && size > 0) {
+			HLOG (0, "*** Output buffer overflow (%d of %d bytes written)\n", i, size);
+		}
+	}
 	if (!fBufferOutput) {
 		StartOutput ();
 	}
@@ -736,7 +736,7 @@ void BluntServer::HandleData ()
 				}
 			}
 		} while (InputBufferCount () > 0 && tail != fInputTail);
-		HLOG (1, "  Done %d %d\n", fInputTail, fInputHead);
+		HLOG (1, "	Done %d %d\n", fInputTail, fInputHead);
 		fBufferOutput = buffering;
 		if (!fBufferOutput && fOutputHead != fOutputTail) {
 			StartOutput ();
@@ -765,19 +765,19 @@ void BluntServer::HandleCommand (BluntCommand* command)
 	switch (command->fType) {
 		case C_RESET: {
 			BluntResetCommand* c = (BluntResetCommand*) command;
-			HLOG (1, "  Reset: %s\n", c->fName);
+			HLOG (1, "	Reset: %s\n", c->fName);
 			strcpy (((HCI *) fHandlers[0])->fName, c->fName);
 			((HCI *) fHandlers[0])->Reset ();
 			} break;
 		case C_CONNECT: {
 			BluntConnectionCommand* c = (BluntConnectionCommand*) command;
-			HLOG (1, "  Connect: %d\n", c->fTargetLayer);
+			HLOG (1, "	Connect: %d\n", c->fTargetLayer);
 			SetupProtocolStack (c);
 			} break;
 		case C_DISCONNECT: {
 			BluntDisconnectCommand* c = (BluntDisconnectCommand*) command;
 			Boolean b = false;
-			HLOG (1, "  Disconnect: %04x", c->fHCIHandle);
+			HLOG (1, "	Disconnect: %04x", c->fHCIHandle);
 			for (i = 1; i < fNumHandlers; i++) {
 				hci = (HCI *) fHandlers[i];
 				if (hci->fHandlerType == H_HCI &&
@@ -794,46 +794,46 @@ void BluntServer::HandleCommand (BluntCommand* command)
 			} break;
 		case C_INQUIRY: {
 			BluntInquiryCommand* c = (BluntInquiryCommand*) command;
-			HLOG (1, "  Inquiry %d %d\n", c->fTime, c->fAmount);
+			HLOG (1, "	Inquiry %d %d\n", c->fTime, c->fAmount);
 			((HCI *) fHandlers[0])->Inquiry (c->fTime, c->fAmount);
 			} break;
 		case C_INQUIRY_CANCEL: {
-			HLOG (1, "  Cancel inquiry\n");
+			HLOG (1, "	Cancel inquiry\n");
 			((HCI *) fHandlers[0])->InquiryCancel ();
 			} break;
 		case C_NAME_REQUEST: {
 			BluntNameRequestCommand* c = (BluntNameRequestCommand*) command;
-			HLOG (1, "  Name request\n");
+			HLOG (1, "	Name request\n");
 			((HCI *) fHandlers[0])->RemoteNameRequest (c->fBdAddr, c->fPSRepMode, c->fPSMode);
 			} break;
 		case C_INIT_PAIR:
-			HLOG (1, "  Pair\n");
+			HLOG (1, "	Pair\n");
 			InitiatePairing ((BluntInitiatePairingCommand*) command);
 			break;
 		case C_SERVICE_REQUEST:
-			HLOG (1, "  Service request\n");
+			HLOG (1, "	Service request\n");
 			InitiateServiceRequest ((BluntServiceRequestCommand*) command);
 			break;
 		case C_SET_LOG_LEVEL: {
 			BluntSetLogLevelCommand* c = (BluntSetLogLevelCommand*) command;
 			fLogLevel = c->fLevel[0];
-			HLOG (1, "  Set log level %d\n", c->fLevel[0]);
+			HLOG (1, "	Set log level %d\n", c->fLevel[0]);
 			for (i = 0; i < fNumHandlers; i++) {
 				fHandlers[i]->SetLogLevel (c->fLevel);
 			}
 			for (i = 0; i < 5; i++) fDefaultLogLevel[i] = c->fLevel[i];
 			} break;
 		case C_DATA:
-			HLOG (1, "  Send data\n");
+			HLOG (1, "	Send data\n");
 			SendData ((BluntDataCommand*) command);
 			break;
-        case C_STATUS:
-            HLOG (1, "  Status\n");
-            Status ();
-            break;
-        case C_LOG:
+		case C_STATUS:
+			HLOG (1, "	Status\n");
+			Status ();
+			break;
+		case C_LOG:
 			if (fLogger) fLogger->Output (((BluntLogCommand*) command)->fData, ((BluntLogCommand*) command)->fSize);
-            break;
+			break;
 	}
 	if (command->fDelete) delete command->fOriginalCommand;
 }
@@ -911,7 +911,7 @@ HCI *BluntServer::SetupHCILayer (TObjectId port, UChar* addr, UByte psRepMode, U
 	}
 	if (hci == NULL) {
 		hci = new HCI ();
-		HLOG (1, "  HCI: %08x\n", hci);
+		HLOG (1, "	HCI: %08x\n", hci);
 		hci->fConnectionHandle = -1;
 		hci->fTool = port;
 		hci->fConnectionState = CONN_CONNECT;
@@ -1060,9 +1060,9 @@ void BluntServer::SendData (BluntDataCommand* command)
 	if (command->fHandler->fHandlerType == H_RFCOMM) {
 		mtu = MIN (192, rfcomm->fRemoteMTU - 16);
 		count = command->fData->GetSize ();
-		HLOG (1, "  MTU: %d, Len: %d Pos: %d\n", mtu, count, command->fData->Position ());
+		HLOG (1, "	MTU: %d, Len: %d Pos: %d\n", mtu, count, command->fData->Position ());
 		n = command->fData->Getn (data, mtu);
-		HLOG (1, "  Len: %d Pos: %d\n", n, command->fData->Position ());
+		HLOG (1, "	Len: %d Pos: %d\n", n, command->fData->Position ());
 		if (n > 0) {
 			rfcomm->SndUnnumberedInformation (data, n);
 		} else {
@@ -1241,23 +1241,23 @@ void BluntServer::Print ()
 
 void BluntServer::Status ()
 {
-	HLOG (1, "BluntServer::Status\n  Rx Error Status: %d\n", fRxErrorStatus);
+	HLOG (1, "BluntServer::Status\n	 Rx Error Status: %d\n", fRxErrorStatus);
 	Print ();
 	((HCI *) fHandlers[0])->Status ();
 }
 
 void BluntServer::Log (Long logLevel, char *format, ...)
 {
-    va_list args;
-    char buffer[128];
+	va_list args;
+	char buffer[128];
 	char *c;
-    
-    if (fLogLevel >= logLevel) {
-        va_start (args, format);
-        vsprintf (buffer, format, args);
-        va_end (args);
+	
+	if (fLogLevel >= logLevel) {
+		va_start (args, format);
+		vsprintf (buffer, format, args);
+		va_end (args);
 		fLogger->Output ((UByte*) buffer, strlen (buffer));
-    }
+	}
 }
 
 void BluntServer::LogInputBuffer (Long logLevel)
@@ -1269,11 +1269,11 @@ void BluntServer::LogInputBuffer (Long logLevel)
 	if (fLogLevel >= logLevel) {
 		n = InputBufferCount ();
 		if (n > 0) {
-			HLOG (logLevel, "  Input buffer: %d bytes (%d %d)\n  ", n, fInputTail, fInputHead);
+			HLOG (logLevel, "  Input buffer: %d bytes (%d %d)\n	 ", n, fInputTail, fInputHead);
 			for (i = 0; i < n && i < 256; i++) {
 				PeekInputBuffer (&c, i, sizeof (c));
 				HLOG (logLevel, "%02x ", c);
-				if ((i + 1) % 16 == 0) HLOG (logLevel, "\n  ");
+				if ((i + 1) % 16 == 0) HLOG (logLevel, "\n	");
 			}
 			 HLOG (logLevel, "\n");
 		} else {
