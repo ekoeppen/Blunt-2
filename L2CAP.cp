@@ -648,7 +648,6 @@ void L2CAP::SndData (UByte *data, Short length)
 	fServer->BufferOutput (true);
 	SndPacketHeader (length);
 	fServer->Output (data, length, false);
-	fServer->StartOutput ();
 }
 
 void L2CAP::SndPacketHeader (Short dataSize)

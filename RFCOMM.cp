@@ -407,7 +407,6 @@ void RFCOMM::SndData (UByte *data, Short length)
 	fServer->BufferOutput (true);
 	((L2CAP *) fParentHandler)->SndPacketHeader (length);
 	fServer->Output (data, length);
-	fServer->StartOutput ();
 }
 
 void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
@@ -451,12 +450,10 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 
 	crc = CalculateCRC (header, 2);
 
-	fServer->BufferOutput (true);
 	((L2CAP *) fParentHandler)->SndPacketHeader (headerLen + len + sizeof (crc));
 	fServer->Output (header, headerLen);
 	fServer->Output (data, len);
 	fServer->Output (&crc, sizeof (crc));
-	fServer->StartOutput ();
 }
 
 void RFCOMM::ProcessMultiplexerCommands (void)

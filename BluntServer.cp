@@ -403,7 +403,9 @@ void BluntServer::TxBEmptyIntHandler (void)
 		if (fOutputHead == fOutputTail) {
 			fChip->ResetTxBEmpty ();
 		} else {
-			while (fChip->TxBufEmpty () &&
+			while (
+				!fBufferOutput &&
+				fChip->TxBufEmpty () &&
 				fOutputHead != fOutputTail && 
 				(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
 				c = fOutputBuffer[fOutputTail];
