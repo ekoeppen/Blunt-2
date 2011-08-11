@@ -903,11 +903,12 @@ void HCI::SndPacketHeader (Byte flags, Size length)
 
 	fOutstandingPackets++;
 	HLOG (1, "HCI::SndPacketHeader\n %04x %d (%d)\n", fConnectionHandle, length, fOutstandingPackets);
-	if (fOutstandingPackets > fHCIWindowSize / 2) {
-		HLOG (0, "*** Too many outstanding packets in HCI::SndPacketHeader (%d > %d)\n",
+
+	if (fOutstandingPackets > fHCIWindowSize) {
+		HLOG (0, "*** Too many outstanding packets in HCI::SndPacketHeader (%d > %d), ",
 			fOutstandingPackets, fHCIWindowSize);
-		HLOG (0, "*** Buffer tail %d, head %d)\n",
-            fServer->fOutputTail, fServer->fOutputHead);
+		HLOG (0, "Buffer tail %d, head %d)\n",
+			fServer->fOutputTail, fServer->fOutputHead);
 		fServer->BufferOutput (true);
 	}
 

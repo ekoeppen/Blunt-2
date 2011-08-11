@@ -691,7 +691,7 @@ void BluntServer::Output (UByte* data, ULong size, Boolean packetStart)
 			if (fOutputTail == fOutputHead) break;
 		}
 		if (fOutputTail == fOutputHead && size > 0) {
-			HLOG (0, "*** Output buffer overflow (%d of %d bytes written)\n", i, size);
+			HLOG (0, "*** Output buffer overflow (%d of %d bytes written at %d)\n", i, size, fOutputTail);
 		}
 	}
 	if (!fBufferOutput) {
