@@ -468,7 +468,7 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 	e = new BluntDataSentEvent (noErr, len);
 	if (delayConfirmation) {
 		HLOG (1, "  Delaying receipt confirmation");
-		delay = GetGlobalTime () + TTime (500, kMilliseconds);
+		delay = GetGlobalTime () + TTime (200, kMilliseconds);
 		d = &delay;
 	}
 	p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, d, BLUNT_MSG_TYPE);

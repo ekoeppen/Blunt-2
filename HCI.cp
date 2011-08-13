@@ -874,7 +874,7 @@ Boolean HCI::IsWindowFull ()
 
 Boolean HCI::IsWindowCritical ()
 {
-	return fOutstandingPackets > (fHCIWindowSize - 2);
+	return fOutstandingPackets > (fHCIWindowSize / 2);
 }
 
 	
