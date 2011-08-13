@@ -630,33 +630,27 @@ void BluntServer::StartOutput ()
 {
 	UByte c;
 	ULong n;
-	int i;
 	
 	fBufferOutput = false;
+	n = 0;
 	if (fTxDMA) {
 		HLOG (1, "BluntServer::StartOutput (%d)\n", fTxDMABuffer->BufferCount ());
 		fChip->SetTxDTransceiverEnable (true);
 		fChip->TxDMAControl (kDMANotifyOnNext | kDMAStart);
-		HLOG (1, " Sent %d bytes (%d left)\n", i, fTxDMABuffer->BufferCount ());
+		HLOG (1, " Sent %d bytes (%d left)\n", n, fTxDMABuffer->BufferCount ());
 	} else {
 		HLOG (1, "BluntServer::StartOutput (%d %d)\n", fOutputHead, fOutputTail);
 		fChip->SetTxDTransceiverEnable (true);
-		i = 0;
-		while (fChip->TxBufEmpty () &&
+		if (fChip->TxBufEmpty () &&
 			fOutputHead != fOutputTail &&
 			(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
-			i++;
+			n++;
 			c = fOutputBuffer[fOutputTail];
 			fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
 			fChip->PutByte (c);
-/*			  
-			if (!fChip->TxBufEmpty ()) {
-				HLOG (1, "*** Send buffer full after %d bytes, %d %d remaining\n", i, fOutputHead, fOutputTail);
-			}
-*/
 		}
 
-		HLOG (1, " Sent %d bytes (%d %d left)\n", i, fOutputHead, fOutputTail);
+		HLOG (1, " Sent %d bytes (%d %d left)\n", n, fOutputHead, fOutputTail);
 	}
 }
 
