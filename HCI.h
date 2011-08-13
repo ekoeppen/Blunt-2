@@ -48,6 +48,9 @@ public:
 	HCI*					GetHandler (Short handle);
 	HCI*					GetHandler (UByte *);
 	
+	Boolean					IsWindowFull ();
+	Boolean					IsWindowCritical ();
+	
 	// Packet header
 	
 	void					SndPacketHeader (Byte flags, Size length);

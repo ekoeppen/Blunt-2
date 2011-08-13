@@ -1070,8 +1070,6 @@ void BluntServer::SendData (BluntDataCommand* command)
 		} else {
 			HLOG (0, "*** no bytes out of %d bytes to send?\n", count);
 		}
-		e = new BluntDataSentEvent (noErr, n);
-		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
 	} else {
 		e = new BluntDataSentEvent (kErrNoPeer, 0);
 		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);

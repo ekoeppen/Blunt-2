@@ -415,6 +415,10 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 	UByte crc;
 	Short headerLen;
     ULong credit;
+	BluntDataSentEvent *e;
+	TTime delay, *d;
+	Boolean delayConfirmation;
+	TUPort p (fTool);
 	
 	HLOG (1, "RFCOMM::SndUnnumberedInformation (%d %d)\n", fDLCI, len);
 	header[0] = (fDLCI << 2) | COMMAND | EA; 
@@ -429,11 +433,14 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 		headerLen = 3;
 	}
 
+	delayConfirmation = false;
+	d = nil;
     if (fUseCredit) {
         HLOG (1, " Remote credit %d\n", fCreditGiven);
         fCreditReceived--;
         if (fCreditReceived < REMOTE_CREDIT_LOW) {
             HLOG (0, "*** Received credit low: %d\n", fCreditReceived);
+			delayConfirmation = true;
         }
         if (fCreditGiven < REMOTE_CREDIT_LOW) {
             header[1] |= PF;
@@ -441,6 +448,7 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
                 credit = REMOTE_CREDIT_INCREASE;
             } else {
                 credit = 1;
+				delayConfirmation = true;
             }
             header[headerLen++] = credit;
             fCreditGiven += credit;
@@ -454,6 +462,16 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 	fServer->Output (header, headerLen);
 	fServer->Output (data, len);
 	fServer->Output (&crc, sizeof (crc));
+
+	if (!delayConfirmation) delayConfirmation = ((HCI *)(fParentHandler->fParentHandler))->IsWindowCritical ();
+
+	e = new BluntDataSentEvent (noErr, len);
+	if (delayConfirmation) {
+		HLOG (1, "  Delaying receipt confirmation");
+		delay = GetGlobalTime () + TTime (500, kMilliseconds);
+		d = &delay;
+	}
+	p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, d, BLUNT_MSG_TYPE);
 }
 
 void RFCOMM::ProcessMultiplexerCommands (void)

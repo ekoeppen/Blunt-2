@@ -859,13 +859,24 @@ void HCI::TrackCompletedPackets ()
 			if (handle == hci->fConnectionHandle) {
 				hci->fOutstandingPackets -= fPacket[4 + fPacket[3] * 2 + j];
 				HLOG (1, "  Handler %d (%04x): %d outstanding\n", i, hci->fConnectionHandle, hci->fOutstandingPackets);
-				if (hci->fOutstandingPackets < hci->fHCIWindowSize / 2 && fServer->fBufferOutput) {
+				if (!hci->IsWindowCritical () && fServer->fBufferOutput) {
 					fServer->StartOutput ();
 				}
 			}
 		}
 	}
 }	
+
+Boolean HCI::IsWindowFull ()
+{
+	return fOutstandingPackets > fHCIWindowSize;
+}
+
+Boolean HCI::IsWindowCritical ()
+{
+	return fOutstandingPackets > (fHCIWindowSize - 2);
+}
+
 	
 #pragma mark -
 
@@ -904,7 +915,7 @@ void HCI::SndPacketHeader (Byte flags, Size length)
 	fOutstandingPackets++;
 	HLOG (1, "HCI::SndPacketHeader\n %04x %d (%d)\n", fConnectionHandle, length, fOutstandingPackets);
 
-	if (fOutstandingPackets > fHCIWindowSize) {
+	if (IsWindowFull ()) {
 		HLOG (0, "*** Too many outstanding packets in HCI::SndPacketHeader (%d > %d), ",
 			fOutstandingPackets, fHCIWindowSize);
 		HLOG (0, "Buffer tail %d, head %d)\n",
