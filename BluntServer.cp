@@ -59,8 +59,8 @@ extern UniChar RefToUniChar(RefArg r);
 #define EVT_BLUNT_CHECK_INPUT 0
 
 #define DMA_NOTIFY_LEVEL 129
-#define MAX_OUTPUT 32768
-#define MAX_INPUT 32768
+#define MAX_OUTPUT 4096
+#define MAX_INPUT 4096
 
 
 extern "C" void EnterFIQAtomic (void);
@@ -385,7 +385,7 @@ ULong BluntServer::GetSizeOf ()
 
 void BluntServer::TxBEmptyIntHandler (void)
 {
-	ULong n, size, oldTail;
+	ULong n, size;
 	int i;
 	UByte c;
 	SerialStatus status;
@@ -403,7 +403,6 @@ void BluntServer::TxBEmptyIntHandler (void)
 		if (fOutputHead == fOutputTail) {
 			fChip->ResetTxBEmpty ();
 		} else {
-			oldTail = fOutputTail;
 			while (
 				!fBufferOutput &&
 				fChip->TxBufEmpty () &&
@@ -416,12 +415,6 @@ void BluntServer::TxBEmptyIntHandler (void)
 			status = fChip->GetSerialStatus ();
 			if (status & kSerialCTSAsserted == 0 || status & kSerialDSRAsserted == 0) {
 				HLOG (0, "SerialStatus: %08x\n", status);
-			}
-			if (fOutputTail < oldTail) {
-				HLOG (0, "*** tail wrapped: %d, old tail: %d\n", fOutputTail, oldTail);
-			}
-			if (fOutputTail > fOutputHead) {
-				HLOG (0, "*** tail ahead (2): %d, head: %d\n", fOutputTail, fOutputHead);
 			}
 		}
 	}
@@ -636,51 +629,40 @@ void BluntServer::TaskMain ()
 void BluntServer::StartOutput ()
 {
 	UByte c;
-	ULong n, oldTail, oldHead, d;
+	ULong n;
+	int i;
 	
 	fBufferOutput = false;
 	if (fTxDMA) {
 		HLOG (1, "BluntServer::StartOutput (%d)\n", fTxDMABuffer->BufferCount ());
 		fChip->SetTxDTransceiverEnable (true);
 		fChip->TxDMAControl (kDMANotifyOnNext | kDMAStart);
-		HLOG (1, " Sent %d bytes (%d left)\n", n, fTxDMABuffer->BufferCount ());
+		HLOG (1, " Sent %d bytes (%d left)\n", i, fTxDMABuffer->BufferCount ());
 	} else {
 		HLOG (1, "BluntServer::StartOutput (%d %d)\n", fOutputHead, fOutputTail);
 		fChip->SetTxDTransceiverEnable (true);
-		n = 0;
-		oldTail = fOutputTail;
-		oldHead = fOutputHead;
+		i = 0;
 		while (fChip->TxBufEmpty () &&
 			fOutputHead != fOutputTail &&
 			(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
-			d = fOutputTail;
-			n++;
+			i++;
 			c = fOutputBuffer[fOutputTail];
 			fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
 			fChip->PutByte (c);
 /*			  
 			if (!fChip->TxBufEmpty ()) {
-				HLOG (1, "*** Send buffer full after %d bytes, %d %d remaining\n", n, fOutputHead, fOutputTail);
+				HLOG (1, "*** Send buffer full after %d bytes, %d %d remaining\n", i, fOutputHead, fOutputTail);
 			}
 */
-			d = fOutputTail - d;
-			if (d > 1) HLOG (0, "*** OOPS! %d\n", d);
 		}
 
-		if (fOutputTail < oldTail) {
-			HLOG (0, "*** tail wrapped: %d, old tail: %d\n", fOutputTail, oldTail);
-		}
-		if (fOutputTail > fOutputHead) {
-			HLOG (0, "*** tail ahead (1): %d, head: %d\n", fOutputTail, fOutputHead);
-			HLOG (0, "    old head: %d, old tail: %d\n", oldHead, oldTail);
-		}
-		HLOG (1, " Sent %d bytes (%d %d left)\n", n, fOutputHead, fOutputTail);
+		HLOG (1, " Sent %d bytes (%d %d left)\n", i, fOutputHead, fOutputTail);
 	}
 }
 
 void BluntServer::Output (UByte* data, ULong size, Boolean packetStart)
 {
-	ULong n, processedBytes, oldTail, oldHead;
+	ULong n, processedBytes;
 	int i;
 	
 	HLOG (2, "BluntServer::Output (%d): %08x %d\n", fBufferOutput, data, size);
@@ -703,22 +685,13 @@ void BluntServer::Output (UByte* data, ULong size, Boolean packetStart)
 		processedBytes = size - n;
 		HLOG (2, " Buffered %d of %d bytes (%d free)\n", processedBytes, size, fTxDMABuffer->BufferSpace ());
 	} else {
-		oldTail = fOutputTail;
-		oldHead = fOutputHead;
 		for (i = 0; i < size; i++) {
 			fOutputBuffer[fOutputHead] = data[i];
 			fOutputHead = (fOutputHead + 1) % MAX_OUTPUT;
 			if (fOutputTail == fOutputHead) break;
 		}
 		if (fOutputTail == fOutputHead && size > 0) {
-			HLOG (0, "*** Output buffer overflow (%d of %d bytes written), ", i, size);
-			HLOG (0, "head: %d, old head: %d, old tail: %d\n", fOutputHead, oldHead, oldTail);
-		}
-		if (fOutputHead < oldHead) {
-			HLOG (0, "*** head wrapped: %d, old head: %d\n", fOutputHead, oldHead);
-		}
-		if (fOutputTail > fOutputHead) {
-			HLOG (0, "*** tail ahead (3): %d, head: %d\n", fOutputTail, fOutputHead);
+			HLOG (0, "*** Output buffer overflow (%d of %d bytes written at %d)\n", i, size, fOutputTail);
 		}
 	}
 	if (!fBufferOutput) {
