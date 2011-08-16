@@ -1,0 +1,82 @@
+EXPORTS = Exports.exp
+OBJS = Main.o BluntServer.o BluntClient.o HCI.o L2CAP.o SDP.o RFCOMM.o EventsCommands.o Logger.o
+HDRS = BluntClient.h CircleBuf.h EventsCommands.h Logger.h RFCOMMTool.h \
+    BluntServer.h CommToolImpl.h HCI.h RFCOMM.h SDP.h \
+    Buffer.h Definitions.h L2CAP.h RFCOMMService.impl.h
+LIBS = "{NCT_Libraries}MP2x00US.a.o"
+# LIBS = "{NCT_Libraries}MP2100D.a.o"
+MODULE = BluntServer.ntkc
+
+# --- Generic rules ----------------------------------------------------------------
+
+AIFFILE = $(MODULE:.ntkc=.aif)
+OBJS += $(EXPORTS:.exp=.o)
+	
+CPP = ARMCpp
+CC = ARM6c
+AS = ARM6asm
+LD = ARMLink
+AIF_TO_NTK = AIFtoNTK
+PACKER = Packer
+NCT_BUILD_MAIN = NCTBuildMain
+SETFILE = /Developer/Tools/SetFile
+
+LDFLAGS = "{NCT-link-options}" -rel -debug
+CPPFLAGS = "{NCT-ARMCpp-options}" -W -gf -d forDebug \
+	-i "{DDK_Includes-dir}" \
+	-i "{DDK_Includes-dir}CLibrary:" \
+	-i "{DDK_Includes-dir}CommAPI:" \
+	-i "{DDK_Includes-dir}Communications:" \
+	-i "{DDK_Includes-dir}Frames:" \
+	-i "{DDK_Includes-dir}HAL:" \
+	-i "{DDK_Includes-dir}OS600:" \
+	-i "{DDK_Includes-dir}Power:" \
+	-i "{DDK_Includes-dir}Toolbox:" \
+	-i "{DDK_Includes-dir}UtilityClasses:" \
+	-i "{DDK_Includes-dir}PCMCIA:" \
+	-i "{NCT_Includes}" \
+	-i "{NCT_Includes}Frames:" \
+	-i "{NCT_Includes}Utilities:"
+	
+ASFLAGS = "{NCT-asm-options}"
+
+PACKERFLAGS = -packageid 'rfcm' -version 1 -copyright 2005
+
+all: $(MODULE) BluntTool.pkg
+	
+clean:
+	rm -f $(OBJS) BluntTool.pkg BluntTool.bin BluntServer.ntkc RFCOMMService.o RFCOMMTool.o RelocHack.o RFCOMMService.impl.o
+	
+$(AIFFILE) : $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+%.o : %.cp $(HDRS)
+	$(CPP) $(CPPFLAGS) -o $*.o $<
+	
+%.a : %.cp
+	$(CPP) $(CPPFLAGS) -S -o $*.a $<
+	
+%.a : %.exp
+	$(NCT_BUILD_MAIN) $< $*.a
+
+%.o : %.a
+	$(AS) $(ASFLAGS) $*.a -o $*.o
+	
+%.ntkc : %.aif
+	$(AIF_TO_NTK) -via $(EXPORTS) -o $@ $<
+	
+%.impl.a	: %.impl.h
+	ProtocolGen -ImplementationGlue $< -package $(CPPFLAGS) -stdout > $@
+%.a : %.h
+	ProtocolGen -InterfaceGlue $< $(CPPFLAGS) ${CPlusIncludes} -stdout > $@
+
+# --- Other stuff -------------------------------------------------------------------
+
+BluntTool.pkg: RFCOMMService.o RFCOMMTool.o RelocHack.o RFCOMMService.impl.o EventsCommands.o
+	$(LD) $(LDFLAGS) -o BluntTool.bin $+ $(LIBS)
+	$(PACKER) -o $@ BluntTool $(PACKERFLAGS)  -protocol -aif BluntTool.bin -autoLoad -autoRemove
+	$(SETFILE) -t "pkg " -c "pkgX" $@
+
+# {NCT-link} {NCT-link-options} -dupok -o :Objects:TRFCOMMToolMP2100D.bin ":{NCT-ObjectOut}:RelocHack.a.o" ":{NCT-ObjectOut}:THCILayer.cp.o" ":{NCT-ObjectOut}:TL2CAPLayer.cp.o" ":{NCT-ObjectOut}:TSDPLayer.cp.o" ":{NCT-ObjectOut}:TRFCOMMLayer.cp.o" ":{NCT-ObjectOut}:TRFCOMMTool.cp.o" ":{NCT-ObjectOut}:TRFCOMMService.cp.o" ":{NCT-ObjectOut}:TRFCOMMService.impl.h.o" "{NCT_Libraries}MP2100D.a.o"
+# "{NCT-packer}" -o BluntMP2100D.pkg "Blunt" {NCT-packer-options} -packageid 'rfcm' -copyright 'Copyright (c) 2003 Eckhart Kšppen' -version 01 ¶
+# -protocol -aif ":{NCT-ObjectOut}:TRFCOMMToolMP2100D.bin" -autoload -autoRemove
