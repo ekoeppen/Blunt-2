@@ -115,6 +115,9 @@ RFCOMM::RFCOMM (void)
 	CreateCRCTable ();
 	fConnectionState = CONN_IDLE;
     fUseCredit = true;
+	fBlockedByHCI = false;
+	fBlockedByLowCredit = 0;
+	fLengthToConfirm = 0;
 }
 	
 RFCOMM::~RFCOMM (void)
@@ -228,8 +231,16 @@ void RFCOMM::HandleTimer (void *userData)
 
 void RFCOMM::HCIClearToSend (Boolean isClear)
 {
-	HLOG (1, "RFCOMM::HCIClearToSend: %d\n", isClear);
+	BluntDataSentEvent *e;
+	TUPort p (fTool);
 
+	HLOG (1, "RFCOMM::HCIClearToSend: %d\n", isClear);
+	if (fBlockedByHCI) {
+		HLOG (0, "*** Unblocking HCI\n");
+		e = new BluntDataSentEvent (noErr, fLengthToConfirm);
+		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
+		fLengthToConfirm = 0;
+	}
 	Handler::HCIClearToSend (isClear);
 }
 
@@ -471,13 +482,14 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 
 	fBlockedByHCI = ((HCI *)(fParentHandler->fParentHandler))->IsWindowCritical ();
 
-	e = new BluntDataSentEvent (noErr, len);
-	if (fBlockedByHCI || fBlockedByLowCredit) {
-		HLOG (1, "  Delaying receipt confirmation");
-		delay = GetGlobalTime () + TTime (200, kMilliseconds);
-		d = &delay;
+	if (!fBlockedByHCI) {
+		e = new BluntDataSentEvent (noErr, fLengthToConfirm);
+		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
+		fLengthToConfirm = 0;
+	} else {
+		HLOG (0, "*** Delaying receipt confirmation\n");
+		fLengthToConfirm += len;
 	}
-	p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, d, BLUNT_MSG_TYPE);
 }
 
 void RFCOMM::ProcessMultiplexerCommands (void)

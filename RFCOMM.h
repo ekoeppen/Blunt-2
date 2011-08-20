@@ -36,6 +36,8 @@ public:
 	Boolean					fBlockedByHCI;
 	Boolean					fBlockedByLowCredit;
 	
+	Long					fLengthToConfirm;
+	
 	UByte					fCRCTable[256];
 
 							RFCOMM (void);
