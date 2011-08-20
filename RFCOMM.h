@@ -32,6 +32,9 @@ public:
     Boolean                 fUseCredit;
     Long                    fCreditReceived;
     Long                    fCreditGiven;
+
+	Boolean					fBlockedByHCI;
+	Boolean					fBlockedByLowCredit;
 	
 	UByte					fCRCTable[256];
 

@@ -877,6 +877,10 @@ Boolean HCI::IsWindowCritical ()
 	return fOutstandingPackets > (fHCIWindowSize / 2);
 }
 
+Boolean HCI::IsWindowEmpty ()
+{
+	return fOutstandingPackets == 0;
+}
 	
 #pragma mark -
 
