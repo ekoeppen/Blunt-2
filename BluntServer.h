@@ -98,6 +98,9 @@ public:
 							~Handler ();
 	void					AddHandler (Handler *handler, BluntServer *server);
 	void					RemoveHandler (Handler *handler);
+	
+	virtual	void			HCIClearToSend (Boolean isClear);
+	
 	void					Print (int depth);
 	void					SetLogLevel (Byte level[6]);
     void                    Log (Long logLevel, char* format, ...);

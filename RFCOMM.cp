@@ -226,6 +226,13 @@ void RFCOMM::HandleTimer (void *userData)
 	Transition (EVT_RFCOMM_TIMER, userData);
 }
 
+void RFCOMM::HCIClearToSend (Boolean isClear)
+{
+	HLOG (1, "RFCOMM::HCIClearToSend: %d\n", isClear);
+
+	Handler::HCIClearToSend (isClear);
+}
+
 void RFCOMM::Connect (void)
 {
 	RFCOMM *control;

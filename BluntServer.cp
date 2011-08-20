@@ -291,6 +291,15 @@ void Handler::RemoveHandler (Handler *handler)
 	}
 }
 
+void Handler::HCIClearToSend (Boolean isClear)
+{
+	int i;
+	
+	for (i = 0; i < fNumHandlers; i++) {
+		fHandlers[i]->HCIClearToSend (isClear);
+	}
+}
+
 void Handler::Print (int depth)
 {
 	int i, j;

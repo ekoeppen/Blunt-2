@@ -50,11 +50,14 @@ public:
 	void					HandleTimer (void *userData);
 	int						ProcessRFCOMMEvent (UByte *data);
 	NewtonErr				ProcessEvent (UByte event, UByte *data, Byte DLCI);
+
+	virtual	void			HCIClearToSend (Boolean isClear);
+
 	void					CompleteConnection (void);
 	void					CompleteDisconnect (void);
 	void					MPXConnected (void);
 	void					ConnectionError (void);
-
+	
 	void					SetAsynchronousBalancedMode ();
 	void					UnnumberedAcknowlegdement ();
 	void					DisconnectedMode ();

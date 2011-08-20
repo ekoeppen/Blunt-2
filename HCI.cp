@@ -862,6 +862,7 @@ void HCI::TrackCompletedPackets ()
 				if (!hci->IsWindowCritical () && fServer->fBufferOutput) {
 					fServer->StartOutput ();
 				}
+				if (hci->IsWindowEmpty ()) hci->HCIClearToSend (true);
 			}
 		}
 	}
