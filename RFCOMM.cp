@@ -236,7 +236,6 @@ void RFCOMM::HCIClearToSend (Boolean isClear)
 
 	HLOG (1, "RFCOMM::HCIClearToSend: %d\n", isClear);
 	if (fBlockedByHCI) {
-		HLOG (0, "*** Unblocking HCI\n");
 		e = new BluntDataSentEvent (noErr, fLengthToConfirm);
 		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
 		fLengthToConfirm = 0;
