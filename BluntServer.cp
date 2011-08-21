@@ -57,6 +57,7 @@ extern UniChar RefToUniChar(RefArg r);
 // #define DEBUGSTR printf
 
 #define EVT_BLUNT_CHECK_INPUT 0
+#define EVT_BLUNT_HEARTBEAT 1
 
 #define DMA_NOTIFY_LEVEL 129
 #define MAX_OUTPUT 4096
@@ -568,6 +569,8 @@ long BluntServer::TaskConstructor ()
 	
 	fOutstandingPackets = 0;
 	
+	SetTimer (nil, 30000, (void *) EVT_BLUNT_HEARTBEAT);
+
 	return noErr;
 }
 
@@ -861,6 +864,13 @@ void BluntServer::HandleTimer (BluntTimerEvent *event)
 	} else {
 		switch ((int) event->fUserData) {
 			case EVT_BLUNT_CHECK_INPUT:
+				break;
+			case EVT_BLUNT_HEARTBEAT:
+				HLOG (0, "*** Heartbeat\n");
+				if (fNumHandlers > 0) {
+					((HCI *) fHandlers[0])->Status ();
+				}
+				SetTimer (nil, 30000, (void *) EVT_BLUNT_HEARTBEAT);
 				break;
 		}
 	}
