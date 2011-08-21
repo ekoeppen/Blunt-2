@@ -486,7 +486,7 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
 		fLengthToConfirm = 0;
 	} else {
-		HLOG (0, "*** Delaying receipt confirmation\n");
+		HLOG (1, "*** Delaying receipt confirmation\n");
 		fLengthToConfirm += len;
 	}
 }

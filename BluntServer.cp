@@ -410,23 +410,7 @@ void BluntServer::TxBEmptyIntHandler (void)
 		}
 	} else {
 		fChip->SetTxDTransceiverEnable (true);
-		if (fOutputHead == fOutputTail) {
-			fChip->ResetTxBEmpty ();
-		} else {
-			while (
-				!fBufferOutput &&
-				fChip->TxBufEmpty () &&
-				fOutputHead != fOutputTail && 
-				(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
-				c = fOutputBuffer[fOutputTail];
-				fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
-				fChip->PutByte (c);
-			}
-			status = fChip->GetSerialStatus ();
-			if (status & kSerialCTSAsserted == 0 || status & kSerialDSRAsserted == 0) {
-				HLOG (0, "SerialStatus: %08x\n", status);
-			}
-		}
+		fChip->ResetTxBEmpty ();
 	}
 	ExitFIQAtomic ();
 	fSemaphore = 0;
@@ -537,7 +521,6 @@ long BluntServer::TaskConstructor ()
 	parms.fSpeed = fSpeed;
 	fChip->SetIOParms (&parms);
 	fChip->SetSpeed (fSpeed);
-	fChip->SetIntSourceEnable (kSerIntSrcTxBufEmpty, true);
 	fChip->Reconfigure ();
 	fChip->SetInterruptEnable (true);
 	fChip->SetTxDTransceiverEnable (true);
@@ -653,10 +636,12 @@ void BluntServer::StartOutput ()
 	} else {
 		HLOG (1, "BluntServer::StartOutput (%d %d)\n", fOutputHead, fOutputTail);
 		fChip->SetTxDTransceiverEnable (true);
-		if (fChip->TxBufEmpty () &&
-			fOutputHead != fOutputTail &&
-			(fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted))) {
+		while (fOutputHead != fOutputTail) {
+			while (!(fChip->TxBufEmpty () &&
+				fChip->GetSerialStatus () & (kSerialCTSAsserted | kSerialDSRAsserted)))
+				;
 			n++;
+
 			c = fOutputBuffer[fOutputTail];
 			fOutputTail = (fOutputTail + 1) % MAX_OUTPUT;
 			fChip->PutByte (c);
