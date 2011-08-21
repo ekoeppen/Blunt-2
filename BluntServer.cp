@@ -569,7 +569,7 @@ long BluntServer::TaskConstructor ()
 	
 	fOutstandingPackets = 0;
 	
-	SetTimer (nil, 30000, (void *) EVT_BLUNT_HEARTBEAT);
+	// SetTimer (nil, 30000, (void *) EVT_BLUNT_HEARTBEAT);
 
 	return noErr;
 }
