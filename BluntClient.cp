@@ -194,8 +194,9 @@ void BluntClient::SendServiceInfo (BluntServiceResultEvent* event)
 	RefVar addr;
 	
 	HLOG (1, "BluntClient::SendServiceInfo %d\n", event->fResult);
+	service = AllocateFrame ();
+	SetFrameSlot (service, SYM (fResult), MakeInt (event->fResult));
 	if (event->fResult == noErr) {
-		service = AllocateFrame ();
 		addr = AllocateBinary (SYM (binary), 6);
 		WITH_LOCKED_BINARY(addr, a)
 		memcpy (a, event->fBdAddr, 6);
@@ -203,10 +204,8 @@ void BluntClient::SendServiceInfo (BluntServiceResultEvent* event)
 		SetFrameSlot (service, SYM (fBdAddr), addr);
 		SetFrameSlot (service, SYM (fService), MakeInt (event->fServiceUUID));
 		SetFrameSlot (service, SYM (fPort), MakeInt (event->fServicePort));
-		NSSendIfDefined (*fBlunt, SYM (MServicesCallback), service);
-	} else {
-		NSSendIfDefined (*fBlunt, SYM (MServicesCallback), NILREF);
 	}
+	NSSendIfDefined (*fBlunt, SYM (MServicesCallback), service);
 }
 
 void BluntClient::SetLogLevel (UByte level[5])

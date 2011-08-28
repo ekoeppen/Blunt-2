@@ -23,6 +23,7 @@ public:
 	void					HandleTimer (void *userData);
 	
 	void					Connect ();
+	void					DisconnectRequested ();
 	
 	void					GetServices (void);
 	

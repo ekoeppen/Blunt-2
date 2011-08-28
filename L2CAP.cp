@@ -193,8 +193,10 @@ int L2CAP::Action (int action, void *eventData)
 			if (l2cap != NULL) {
 				SndDisconnectionResponse (l2cap->fLocalCID, l2cap->fRemoteCID);
 				for (i = 0; i < l2cap->fNumHandlers; i++) {
-					if (l2cap->fHandlers[i]->fHandlerType == H_RFCOMM) {
-						((RFCOMM *) l2cap->fHandlers[i])->CompleteDisconnect ();
+					switch (l2cap->fHandlers[i]->fHandlerType) {
+						case H_RFCOMM: ((RFCOMM *) l2cap->fHandlers[i])->CompleteDisconnect (); break;
+						case H_SDP: ((SDP *) l2cap->fHandlers[i])->DisconnectRequested (); break;
+						default: break;
 					}
 				}
 				fParentHandler->RemoveHandler (l2cap);

@@ -217,6 +217,15 @@ void SDP::GetServices (void)
 	SndServiceSearchAttributeRequest (kQueriedServices[fCurrentQueriedService]);
 }
 
+void SDP::DisconnectRequested (void)
+{
+	BluntServiceResultEvent *e;
+
+	HLOG (1, "SDP::DisconnectRequested\n");
+	e = new BluntServiceResultEvent (-16013);
+	fServer->SendEvent (e);
+}
+
 #pragma mark -
 
 // ================================================================================
