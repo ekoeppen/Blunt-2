@@ -1,8 +1,6 @@
 #ifndef __TRFCOMMLAYER_H
 #define __TRFCOMMLAYER_H
 
-#define RFCOMM_MTU_LEN 384
-
 class RFCOMM: public Handler
 {
 public:

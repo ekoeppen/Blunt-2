@@ -1046,21 +1046,20 @@ void BluntServer::SendData (BluntDataCommand* command)
 {
 	RFCOMM* rfcomm;
 	Size count, n;
-	UByte data[192];
 	Size mtu;
 	BluntDataSentEvent *e;
 	
 	rfcomm = (RFCOMM *) command->fHandler;
 	TUPort p (rfcomm->fTool);
-	HLOG (1, "BluntServer::SendData %08x %d\n", command, command->fHandler->fHandlerType);
+	HLOG (1, "BluntServer::SendData %08x %d %d\n", command, command->fHandler->fHandlerType, command->fData->GetSize ());
 	if (command->fHandler->fHandlerType == H_RFCOMM) {
-		mtu = MIN (192, rfcomm->fRemoteMTU - 16);
+		mtu = MIN (RFCOMM_MTU_LEN, rfcomm->fRemoteMTU - 16);
 		count = command->fData->GetSize ();
 		HLOG (1, "	MTU: %d, Len: %d Pos: %d\n", mtu, count, command->fData->Position ());
-		n = command->fData->Getn (data, mtu);
+		n = command->fData->Getn (fRFCOMMSendBuffer, mtu);
 		HLOG (1, "	Len: %d Pos: %d\n", n, command->fData->Position ());
 		if (n > 0) {
-			rfcomm->SndUnnumberedInformation (data, n);
+			rfcomm->SndUnnumberedInformation (fRFCOMMSendBuffer, n);
 		} else {
 			HLOG (0, "*** no bytes out of %d bytes to send?\n", count);
 		}

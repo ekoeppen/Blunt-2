@@ -5,6 +5,8 @@
 #define MAX_PACKETS 64
 #define MAX_MESSAGE 512
 
+#define RFCOMM_MTU_LEN 128
+
 #define BLUNT_MSG_TYPE 0x0000bbbb
 
 #define kErrNoHW			-100000	
