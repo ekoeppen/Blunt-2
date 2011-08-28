@@ -143,7 +143,7 @@ extern "C" Ref MStatus (RefArg rcvr)
 	return NILREF;
 }
 
-extern "C" Ref MSetLogLevel (RefArg rcvr, RefArg l1, RefArg l2, RefArg l3, RefArg l4, RefArg l5)
+extern "C" Ref MSetLogLevel (RefArg rcvr, RefArg l0, RefArg l1, RefArg l2, RefArg l3, RefArg l4, RefArg l5)
 {
 	UByte level[5];
 	
@@ -154,6 +154,7 @@ extern "C" Ref MSetLogLevel (RefArg rcvr, RefArg l1, RefArg l2, RefArg l3, RefAr
 	level[3] = RefToInt (l4);
 	level[4] = RefToInt (l5);
 	client->SetLogLevel (level);
+	client->fLogLevel = RefToInt (l0);
 	return NILREF;
 }
 
