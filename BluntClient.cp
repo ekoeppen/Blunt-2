@@ -7,9 +7,11 @@
 
 extern "C" _sys_write (int fd, char* data, int len);
 
+#define DEFAULT_LOGLEVEL 0
+
 BluntClient::BluntClient (RefArg blunt, TObjectId server)
 {
-	fLogLevel = 1;
+	fLogLevel = DEFAULT_LOGLEVEL;
 	HLOG (1, "BluntClient::BluntClient\n");
 	Init (kBluntEventId, kBluntEventClass);
 	fBlunt = new RefStruct (blunt);
