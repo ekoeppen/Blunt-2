@@ -243,6 +243,26 @@ void RFCOMM::HCIClearToSend (Boolean isClear)
 	Handler::HCIClearToSend (isClear);
 }
 
+void RFCOMM::SendData (CBufferList *data)
+{
+	Size count, n;
+	Size mtu;
+	UByte sendBuffer[RFCOMM_MTU_LEN];
+	
+	fSendData = data;
+	HLOG (1, "RFCOMM::SendData %d\n", fSendData->GetSize ());
+	mtu = MIN (RFCOMM_MTU_LEN, fRemoteMTU - 16);
+	count = fSendData->GetSize ();
+	HLOG (1, "	MTU: %d, Len: %d Pos: %d\n", mtu, count, fSendData->Position ());
+	n = fSendData->Getn (sendBuffer, mtu);
+	HLOG (1, "	Len: %d Pos: %d\n", n, fSendData->Position ());
+	if (n > 0) {
+		SndUnnumberedInformation (sendBuffer, n);
+	} else {
+		HLOG (0, "*** no bytes out of %d bytes to send?\n", count);
+	}
+}
+
 void RFCOMM::Connect (void)
 {
 	RFCOMM *control;

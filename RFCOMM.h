@@ -36,6 +36,8 @@ public:
 	
 	Long					fLengthToConfirm;
 	
+	CBufferList				*fSendData;
+	
 	UByte					fCRCTable[256];
 
 							RFCOMM (void);
@@ -52,6 +54,7 @@ public:
 	NewtonErr				ProcessEvent (UByte event, UByte *data, Byte DLCI);
 
 	virtual	void			HCIClearToSend (Boolean isClear);
+	void					SendData (CBufferList *data);
 
 	void					CompleteConnection (void);
 	void					CompleteDisconnect (void);
