@@ -875,7 +875,11 @@ Boolean HCI::IsWindowFull ()
 
 Boolean HCI::IsWindowCritical ()
 {
-	return fOutstandingPackets > (fHCIWindowSize / 2);
+	Boolean r = fOutstandingPackets > (fHCIWindowSize / 2);
+	if (r) {
+		HLOG (0, "*** HCI window critical");
+	}
+	return r;
 }
 
 Boolean HCI::IsWindowEmpty ()
