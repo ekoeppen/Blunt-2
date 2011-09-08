@@ -72,7 +72,8 @@ enum {
 	A_DATA,
 	A_MPX_CONNECT_ERROR,
 	A_RESEND_DATA_CONNECT,
-	A_MPX_MSC
+	A_MPX_MSC,
+	A_DATA_CONTINUED,		/* 10 */
 };
 
 static const int kStates[][4] = {
@@ -89,6 +90,7 @@ static const int kStates[][4] = {
 	
 	/* Data */
 	{RFCOMM_CONNECTED,			EVT_RFCOMM_UI,				A_DATA,					RFCOMM_ANY},
+	{RFCOMM_CONNECTED,			EVT_RFCOMM_TIMER,			A_DATA_CONTINUED,		RFCOMM_ANY},
 	
 	/* Disconnect states */
 	{RFCOMM_MPX_CONNECT,		EVT_RFCOMM_DM,				A_MPX_CONNECT_ERROR,	RFCOMM_IDLE},
@@ -118,6 +120,7 @@ RFCOMM::RFCOMM (void)
 	fBlockedByHCI = false;
 	fBlockedByLowCredit = 0;
 	fLengthToConfirm = 0;
+	fSendData = nil;
 }
 	
 RFCOMM::~RFCOMM (void)
@@ -158,6 +161,9 @@ int RFCOMM::Action (int action, void *eventData)
 			break;
 		case A_DATA:
 			UnnumberedInformation ();
+			break;
+		case A_DATA_CONTINUED:
+			SendData (nil);
 			break;
 	}
 	return newState;
@@ -235,10 +241,8 @@ void RFCOMM::HCIClearToSend (Boolean isClear)
 	TUPort p (fTool);
 
 	HLOG (1, "RFCOMM::HCIClearToSend: %d\n", isClear);
-	if (fBlockedByHCI) {
-		e = new BluntDataSentEvent (noErr, fLengthToConfirm);
-		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
-		fLengthToConfirm = 0;
+	if (isClear) {
+		SendData (nil);
 	}
 	Handler::HCIClearToSend (isClear);
 }
@@ -247,19 +251,44 @@ void RFCOMM::SendData (CBufferList *data)
 {
 	Size count, n;
 	Size mtu;
+	BluntDataSentEvent *e;
+	TTime delay, *d;
+	TUPort p (fTool);
 	UByte sendBuffer[RFCOMM_MTU_LEN];
 	
-	fSendData = data;
-	HLOG (1, "RFCOMM::SendData %d\n", fSendData->GetSize ());
-	mtu = MIN (RFCOMM_MTU_LEN, fRemoteMTU - 16);
-	count = fSendData->GetSize ();
-	HLOG (1, "	MTU: %d, Len: %d Pos: %d\n", mtu, count, fSendData->Position ());
-	n = fSendData->Getn (sendBuffer, mtu);
-	HLOG (1, "	Len: %d Pos: %d\n", n, fSendData->Position ());
-	if (n > 0) {
-		SndUnnumberedInformation (sendBuffer, n);
+	fBlockedByHCI = ((HCI *)(fParentHandler->fParentHandler))->IsWindowCritical ();
+
+	if (fSendData != nil && data != nil) {
+		HLOG (0, "*** Already sending data");
 	} else {
-		HLOG (0, "*** no bytes out of %d bytes to send?\n", count);
+		if (data != nil) {
+			fSendData = data;
+		}
+
+		if (fSendData != nil && !fBlockedByHCI) {
+			HLOG (1, "RFCOMM::SendData %d\n", fSendData->GetSize ());
+
+			mtu = MIN (RFCOMM_MTU_LEN, fRemoteMTU - 16);
+			count = fSendData->GetSize ();
+
+			HLOG (1, "	MTU: %d, Len: %d Pos: %d\n", mtu, count, fSendData->Position ());
+			n = fSendData->Getn (sendBuffer, mtu);
+			HLOG (1, "	Len: %d Pos: %d\n", n, fSendData->Position ());
+
+			if (n > 0) {
+				SndUnnumberedInformation (sendBuffer, n);
+				fLengthToConfirm += n;
+			}
+
+			if (n < mtu || n == count) {
+				e = new BluntDataSentEvent (noErr, fLengthToConfirm);
+				p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
+				fLengthToConfirm = 0;
+				fSendData = nil;
+			} else {
+				fServer->SetTimer (this, 1, nil);
+			}
+		}
 	}
 }
 
@@ -452,9 +481,6 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 	UByte crc;
 	Short headerLen;
     ULong credit;
-	BluntDataSentEvent *e;
-	TTime delay, *d;
-	TUPort p (fTool);
 	
 	HLOG (1, "RFCOMM::SndUnnumberedInformation (%d %d)\n", fDLCI, len);
 	header[0] = (fDLCI << 2) | COMMAND | EA; 
@@ -470,7 +496,6 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 	}
 
 	fBlockedByLowCredit = false;
-	d = nil;
     if (fUseCredit) {
         HLOG (1, " Remote credit %d\n", fCreditGiven);
         fCreditReceived--;
@@ -498,17 +523,6 @@ void RFCOMM::SndUnnumberedInformation (UByte *data, Short len)
 	fServer->Output (header, headerLen);
 	fServer->Output (data, len);
 	fServer->Output (&crc, sizeof (crc));
-
-	fBlockedByHCI = ((HCI *)(fParentHandler->fParentHandler))->IsWindowCritical ();
-
-	if (!fBlockedByHCI) {
-		e = new BluntDataSentEvent (noErr, fLengthToConfirm);
-		p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataSentEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
-		fLengthToConfirm = 0;
-	} else {
-		HLOG (1, "*** Delaying receipt confirmation\n");
-		fLengthToConfirm += len;
-	}
 }
 
 void RFCOMM::ProcessMultiplexerCommands (void)
