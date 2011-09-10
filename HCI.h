@@ -50,7 +50,7 @@ public:
 	
 	Boolean					IsWindowFull ();
 	Boolean					IsWindowCritical ();
-	Boolean					IsWindowEmpty ();
+	Boolean					IsWindowOk ();
 	
 	// Packet header
 	

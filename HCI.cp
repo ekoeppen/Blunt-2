@@ -862,7 +862,7 @@ void HCI::TrackCompletedPackets ()
 				if (!hci->IsWindowCritical () && fServer->fBufferOutput) {
 					fServer->StartOutput ();
 				}
-				if (hci->IsWindowEmpty ()) hci->HCIClearToSend (true);
+				if (hci->IsWindowOk ()) hci->HCIClearToSend (true);
 			}
 		}
 	}
@@ -877,14 +877,14 @@ Boolean HCI::IsWindowCritical ()
 {
 	Boolean r = fOutstandingPackets > (fHCIWindowSize / 2);
 	if (r) {
-		HLOG (0, "*** HCI window critical");
+		HLOG (0, "*** HCI window critical\n");
 	}
 	return r;
 }
 
-Boolean HCI::IsWindowEmpty ()
+Boolean HCI::IsWindowOk ()
 {
-	return fOutstandingPackets == 0;
+	return fOutstandingPackets < 3;
 }
 	
 #pragma mark -
