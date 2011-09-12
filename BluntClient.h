@@ -33,7 +33,7 @@ public:
 	void				SendServiceInfo (BluntServiceResultEvent* event);
     void                SendStatusInfo (BluntStatusEvent* event);
 	
-	void				SetLogLevel (UByte level[5]);
+	void				SetLogLevel (UByte client, UByte server, UByte hci, UByte l2cap, UByte sdp, UByte rfcomm);
     void                Status ();
     void                Log (int logLevel, char* format, ...);
 	

@@ -143,18 +143,16 @@ extern "C" Ref MStatus (RefArg rcvr)
 	return NILREF;
 }
 
-extern "C" Ref MSetLogLevel (RefArg rcvr, RefArg l0, RefArg l1, RefArg l2, RefArg l3, RefArg l4, RefArg l5)
+extern "C" Ref MSetLogLevel (RefArg rcvr, RefArg levels)
 {
-	UByte level[5];
-	
 	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
-	level[0] = RefToInt (l1);
-	level[1] = RefToInt (l2);
-	level[2] = RefToInt (l3);
-	level[3] = RefToInt (l4);
-	level[4] = RefToInt (l5);
-	client->SetLogLevel (level);
-	client->fLogLevel = RefToInt (l0);
+	client->SetLogLevel (
+		RefToInt (GetFrameSlot(levels, SYM (client))),
+		RefToInt (GetFrameSlot(levels, SYM (server))),
+		RefToInt (GetFrameSlot(levels, SYM (hci))),
+		RefToInt (GetFrameSlot(levels, SYM (l2cap))),
+		RefToInt (GetFrameSlot(levels, SYM (sdp))),
+		RefToInt (GetFrameSlot(levels, SYM (rfcomm))));
 	return NILREF;
 }
 

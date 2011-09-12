@@ -210,10 +210,16 @@ void BluntClient::SendServiceInfo (BluntServiceResultEvent* event)
 	NSSendIfDefined (*fBlunt, SYM (MServicesCallback), service);
 }
 
-void BluntClient::SetLogLevel (UByte level[5])
+void BluntClient::SetLogLevel (UByte client, UByte server, UByte hci, UByte l2cap, UByte sdp, UByte rfcomm)
 {
 	BluntSetLogLevelCommand command;
-	memcpy (command.fLevel, level, sizeof (command.fLevel));
+	
+	fLogLevel = client;
+	command.fLevel[0] = server;
+	command.fLevel[1] = hci;
+	command.fLevel[2] = l2cap;
+	command.fLevel[3] = sdp;
+	command.fLevel[4] = rfcomm;
 	fServerPort.Send (&command, sizeof (command), kNoTimeout, M_COMMAND);
 }
 
