@@ -115,6 +115,7 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 
 NewtonErr TRFCOMMTool::ProcessOptionStart (TOption* theOption, ULong label, ULong opcode)
 {
+	NewtonErr r = noErr;
 	Char s[5];
 	
 	memset (s, 0, 5);
@@ -145,11 +146,18 @@ NewtonErr TRFCOMMTool::ProcessOptionStart (TOption* theOption, ULong label, ULon
 		o = (TRFCOMMLinkKeyOption *) theOption;
 		memcpy (fLinkKey, o->fLinkKey, sizeof (fLinkKey));
 		HLOG (1, "  Link key set\n");
+	} else if (label == 'logl') {
+		TRFCOMMLogLevelOption *o;
+		o = (TRFCOMMLogLevelOption *) theOption;
+		fLogLevel = o->fLogLevel;
+		HLOG (1, "  Log level set: %d\n", fLogLevel);
 	} else if (label == kCMOSerialEventEnables) {
 		TCMOSerialEventEnables *o = (TCMOSerialEventEnables *) theOption;
 		HLOG (1, "Serial events: %08x %d\n", o->serEventEnables, o->carrierDetectDownTime);
+	} else {
+		r = TCommTool::ProcessOptionStart (theOption, label, opcode);
 	}
-	return TCommTool::ProcessOptionStart (theOption, label, opcode);
+	return r;
 }
 
 void TRFCOMMTool::BindStart ()
@@ -321,6 +329,7 @@ void TRFCOMMTool::SendPendingData ()
 	command->fHandler = fDataHandler;
 	fServerPort.Send (command, sizeof (*command), kNoTimeout, M_COMMAND);
 }
+
 void TRFCOMMTool::Log (int logLevel, char *format, ...)
 {
     va_list args;

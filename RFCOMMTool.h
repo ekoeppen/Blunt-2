@@ -60,6 +60,12 @@ public:
 	UChar					fLinkKey[16];
 };
 
+class TRFCOMMLogLevelOption: public TOption
+{
+public:
+	Byte					fLogLevel;
+};
+
 // ================================================================================
 // ¥ TRFCOMMTool
 // ================================================================================
