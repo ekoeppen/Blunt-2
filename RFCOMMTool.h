@@ -3,6 +3,7 @@
 
 #include "Definitions.h"
 #include "CommToolImpl.h"
+#include "EventsCommands.h"
 
 class SCCChannelInts;
 class TCMOSerialIOParms;
@@ -86,8 +87,9 @@ public:
 	Long					fSavedDataAmount;
 	Long					fDataSent;
 	UByte					fLinkKey[16];
+	BluntDataCommand		*fDataCommand;
 	
-	Byte					fPadding[240];
+	Byte					fPadding[236];
 	
 							TRFCOMMTool (unsigned long serviceId);
 	virtual					~TRFCOMMTool (void);

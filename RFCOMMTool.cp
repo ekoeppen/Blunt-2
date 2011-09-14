@@ -16,12 +16,15 @@ TRFCOMMTool::TRFCOMMTool (unsigned long serviceId): TCommTool (serviceId)
 	fLogLevel = DEFAULT_LOGLEVEL;
 	HLOG (1, "-------------------------\nTRFCOMMTool 2\n");
 	
+	fDataCommand = new BluntDataCommand ();
+
 	RelocVTable (__VTABLE__11TRFCOMMTool);
 }
 
 TRFCOMMTool::~TRFCOMMTool (void)
 {
 	HLOG (1, "~TRFCOMMTool\n");
+//	delete fDataCommand; :KLUDGE: should be deleted, but crashes on deletion?
 	delete fSavedData;
 }
 
@@ -45,7 +48,9 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 			case E_CONNECTION_COMPLETE: {
 				BluntConnectionCompleteEvent *e = (BluntConnectionCompleteEvent *) event;
 				if (e->fResult == noErr) {
-					HLOG (1, "  Connection type %d complete: %04x\n", e->fHandler->fHandlerType , fHCIHandle);
+					HLOG (1, "  Connection type %d complete: %04x, result: %d\n",
+						e->fHandler->fHandlerType , fHCIHandle,
+						e->fResult);
 					fHCIHandle = e->fHCIHandle;
 					if (e->fHandler->fHandlerType == H_RFCOMM) {
 						ConnectComplete (e->fResult);
@@ -320,14 +325,12 @@ void TRFCOMMTool::KillGet (void)
 
 void TRFCOMMTool::SendPendingData ()
 {
-	BluntDataCommand* command = new BluntDataCommand ();
-
 	HLOG (1, "TRFCOMMTool::SendPendingData %d\n", fPutBuffer->GetSize ());
-	command->fData = fPutBuffer;
-	command->fHCIHandle = fHCIHandle;
-	command->fRFCOMMPort = fPeerRFCOMMPort;
-	command->fHandler = fDataHandler;
-	fServerPort.Send (command, sizeof (*command), kNoTimeout, M_COMMAND);
+	fDataCommand->fData = fPutBuffer;
+	fDataCommand->fHCIHandle = fHCIHandle;
+	fDataCommand->fRFCOMMPort = fPeerRFCOMMPort;
+	fDataCommand->fHandler = fDataHandler;
+	fServerPort.Send (fDataCommand, sizeof (*fDataCommand), kNoTimeout, M_COMMAND);
 }
 
 void TRFCOMMTool::Log (int logLevel, char *format, ...)
