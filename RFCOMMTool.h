@@ -87,9 +87,12 @@ public:
 	Long					fSavedDataAmount;
 	Long					fDataSent;
 	UByte					fLinkKey[16];
-	BluntDataCommand		*fDataCommand;
+	BluntDataCommand		fDataCommand;
+	BluntConnectionCommand	fConnectionCommand;
+	BluntDisconnectCommand	fDisconnectCommand;
+	BluntLogCommand			fLogCommand;
 	
-	Byte					fPadding[236];
+	Byte					fPadding[116];
 	
 							TRFCOMMTool (unsigned long serviceId);
 	virtual					~TRFCOMMTool (void);

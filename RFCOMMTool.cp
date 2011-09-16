@@ -16,15 +16,12 @@ TRFCOMMTool::TRFCOMMTool (unsigned long serviceId): TCommTool (serviceId)
 	fLogLevel = DEFAULT_LOGLEVEL;
 	HLOG (1, "-------------------------\nTRFCOMMTool 2\n");
 	
-	fDataCommand = new BluntDataCommand ();
-
 	RelocVTable (__VTABLE__11TRFCOMMTool);
 }
 
 TRFCOMMTool::~TRFCOMMTool (void)
 {
 	HLOG (1, "~TRFCOMMTool\n");
-//	delete fDataCommand; :KLUDGE: should be deleted, but crashes on deletion?
 	delete fSavedData;
 }
 
@@ -190,18 +187,16 @@ void TRFCOMMTool::BindStart ()
 
 void TRFCOMMTool::ConnectStart ()
 {
-	BluntConnectionCommand* command = new BluntConnectionCommand ();
-	
 	HLOG (1, "TRFCOMMTool::ConnectStart\n");
 	fSavedDataAmount = 0;
 	fSavedData = new UByte[MAX_SAVE];
-	command->fToolPort = * (TObjectId*) ( (Byte*) this + 0x8c);
-	memcpy (command->fBdAddr, fPeerBdAddr, 6);
-	command->fTargetLayer = L_RFCOMM;
-	command->fL2CAPProtocol = PSM_RFCOMM;
-	command->fRFCOMMPort = fPeerRFCOMMPort;
-	memcpy (command->fLinkKey, fLinkKey, sizeof (fLinkKey));
-	fServerPort.Send (command, sizeof (*command), kNoTimeout, M_COMMAND);
+	fConnectionCommand.fToolPort = * (TObjectId*) ( (Byte*) this + 0x8c);
+	memcpy (fConnectionCommand.fBdAddr, fPeerBdAddr, 6);
+	fConnectionCommand.fTargetLayer = L_RFCOMM;
+	fConnectionCommand.fL2CAPProtocol = PSM_RFCOMM;
+	fConnectionCommand.fRFCOMMPort = fPeerRFCOMMPort;
+	memcpy (fConnectionCommand.fLinkKey, fLinkKey, sizeof (fLinkKey));
+	fServerPort.Send (&fConnectionCommand, sizeof (fConnectionCommand), kNoTimeout, M_COMMAND);
 }
 
 void TRFCOMMTool::ListenStart (void)
@@ -219,12 +214,10 @@ void TRFCOMMTool::AcceptStart (void)
 void TRFCOMMTool::TerminateConnection (void)
 {
 	HLOG (1, "TRFCOMMTool::TerminateConnection\n");
-	BluntDisconnectCommand* command = new BluntDisconnectCommand ();
-	
-	command->fToolPort = * (TObjectId*) ( (Byte*) this + 0x8c);
-	memcpy (command->fBdAddr, fPeerBdAddr, 6);
-	command->fHCIHandle = fHCIHandle;
-	fServerPort.Send (command, sizeof (*command), kNoTimeout, M_COMMAND);
+	fDisconnectCommand.fToolPort = * (TObjectId*) ( (Byte*) this + 0x8c);
+	memcpy (fDisconnectCommand.fBdAddr, fPeerBdAddr, 6);
+	fDisconnectCommand.fHCIHandle = fHCIHandle;
+	fServerPort.Send (&fDisconnectCommand, sizeof (fDisconnectCommand), kNoTimeout, M_COMMAND);
 }
 
 void TRFCOMMTool::TerminateComplete (void)
@@ -326,11 +319,11 @@ void TRFCOMMTool::KillGet (void)
 void TRFCOMMTool::SendPendingData ()
 {
 	HLOG (1, "TRFCOMMTool::SendPendingData %d\n", fPutBuffer->GetSize ());
-	fDataCommand->fData = fPutBuffer;
-	fDataCommand->fHCIHandle = fHCIHandle;
-	fDataCommand->fRFCOMMPort = fPeerRFCOMMPort;
-	fDataCommand->fHandler = fDataHandler;
-	fServerPort.Send (fDataCommand, sizeof (*fDataCommand), kNoTimeout, M_COMMAND);
+	fDataCommand.fData = fPutBuffer;
+	fDataCommand.fHCIHandle = fHCIHandle;
+	fDataCommand.fRFCOMMPort = fPeerRFCOMMPort;
+	fDataCommand.fHandler = fDataHandler;
+	fServerPort.Send (&fDataCommand, sizeof (fDataCommand), kNoTimeout, M_COMMAND);
 }
 
 void TRFCOMMTool::Log (int logLevel, char *format, ...)
@@ -342,9 +335,9 @@ void TRFCOMMTool::Log (int logLevel, char *format, ...)
         va_start (args, format);
         vsprintf (buffer, format, args);
         va_end (args);
-//		printf (buffer);
-		BluntLogCommand* command = new BluntLogCommand ((UByte *) buffer, strlen (buffer));
-		fServerPort.Send (command, sizeof (*command), kNoTimeout, M_COMMAND);
+		fLogCommand.fData = (UByte *) buffer;
+		fLogCommand.fSize = strlen (buffer);
+		fServerPort.Send (&fLogCommand, sizeof (fLogCommand), kNoTimeout, M_COMMAND);
     }
 }
 
