@@ -611,6 +611,7 @@ void BluntServer::TaskMain ()
 				break;
 			case M_TIMER:
 				HandleTimer ((BluntTimerEvent*) fMessage);
+				delete (BluntTimerEvent*) fMessage;
 				break;
 			case M_QUIT:
 				end = true;
@@ -830,7 +831,7 @@ void BluntServer::HandleCommand (BluntCommand* command)
 void BluntServer::HandleTimer (BluntTimerEvent *event)
 {
 	Handler *handler = event->fHandler;
-	HLOG (1, "BluntServer::HandleTimer %08x\n", handler);
+	HLOG (1, "BluntServer::HandleTimer %08x (%08x %d)\n", handler, event->fUserData, event->fResult);
 	if (handler) {
 		switch (handler->fHandlerType) {
 			case H_HCI:
@@ -1074,10 +1075,12 @@ void BluntServer::SetTimer (Handler *handler, int milliSecondDelay, void *userDa
 {
 	BluntTimerEvent* timer = new BluntTimerEvent (kResultOk, handler, userData);
 	TTime delay;
-	
+	NewtonErr r;
+
 	HLOG (1, "BluntServer::SetTimer %08x (%d) %d\n", handler, handler != NULL ? handler->fHandlerType : -1, milliSecondDelay);
 	delay = GetGlobalTime () + TTime (milliSecondDelay, kMilliseconds);
-	fPort.Send (timer, (void *) timer, sizeof (*timer), kNoTimeout, &delay, M_TIMER);
+	r = fPort.Send (timer, (void *) timer, sizeof (*timer), kNoTimeout, &delay, M_TIMER);
+	HLOG (1, "  Result: %d\n", r);
 }
 
 TObjectId BluntServer::Port ()

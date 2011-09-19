@@ -59,6 +59,7 @@ public:
 	BluntEventType	fType;
 	BluntEvent*		fOriginalEvent;
 	NewtonErr		fResult;
+	Boolean			fDelete;
 
 					BluntEvent (BluntEventType type, NewtonErr result);
 	virtual			~BluntEvent();

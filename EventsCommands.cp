@@ -8,6 +8,7 @@ BluntEvent::BluntEvent(BluntEventType type, NewtonErr result)
 	fOriginalEvent = this;
 	fType = type;
 	fResult = result;
+	fDelete = true;
 }
 
 BluntEvent::~BluntEvent()
