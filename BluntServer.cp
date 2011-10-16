@@ -611,7 +611,7 @@ void BluntServer::TaskMain ()
 				break;
 			case M_TIMER:
 				HandleTimer ((BluntTimerEvent*) fMessage);
-				delete (BluntTimerEvent*) fMessage;
+//				delete (BluntTimerEvent*) fMessage;
 				break;
 			case M_QUIT:
 				end = true;
