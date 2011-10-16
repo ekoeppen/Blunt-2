@@ -91,10 +91,11 @@ public:
 	BluntConnectionCommand	fConnectionCommand;
 	BluntDisconnectCommand	fDisconnectCommand;
 	BluntLogCommand			fLogCommand;
+	UByte*					fLogBuffer;
 	
-	Byte					fPadding[116];
+	Byte					fPadding[112];
 	
-							TRFCOMMTool (unsigned long serviceId);
+							TRFCOMMTool (ULong serviceId);
 	virtual					~TRFCOMMTool (void);
 	virtual	ULong			GetSizeOf (void) { return sizeof (TRFCOMMTool); }
 	virtual UChar*			GetToolName() { return (UChar*) "TRFCommTool"; }

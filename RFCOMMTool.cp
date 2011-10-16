@@ -11,11 +11,28 @@
 
 extern "C" _sys_write (int fd, char* data, int len);
 
-TRFCOMMTool::TRFCOMMTool (unsigned long serviceId): TCommTool (serviceId)
+TRFCOMMTool::TRFCOMMTool (ULong serviceId): TCommTool (serviceId)
 {
-	fLogLevel = DEFAULT_LOGLEVEL;
-	HLOG (1, "-------------------------\nTRFCOMMTool 2\n");
+	TUNameServer nameServer;
+	ULong id;
+	ULong spec;
+	TObjectId myPort;
 	
+	fLogLevel = DEFAULT_LOGLEVEL;
+	fLogBuffer = new UByte[128];
+	fLogCommand.fData = fLogBuffer;
+
+	if (nameServer.Lookup ("BluntServer", "TUPort", &id, &spec) == noErr) {
+		fServerPort = id;
+		fGetBuffer = NULL;
+		myPort = * (TObjectId*) ( (Byte*) this + 0x8c);
+		HLOG (1, "-------------------------\nTRFCOMMTool 2\n");
+		HLOG (1, "  Port: %04x, Server port: %04x\n", myPort, id);
+	} else {
+		printf ("Blunt server not running!\n");
+		fServerPort = 0;
+	}
+
 	RelocVTable (__VTABLE__11TRFCOMMTool);
 }
 
@@ -23,6 +40,7 @@ TRFCOMMTool::~TRFCOMMTool (void)
 {
 	HLOG (1, "~TRFCOMMTool\n");
 	delete fSavedData;
+	delete fLogBuffer;
 }
 
 #pragma mark -
@@ -164,25 +182,9 @@ NewtonErr TRFCOMMTool::ProcessOptionStart (TOption* theOption, ULong label, ULon
 
 void TRFCOMMTool::BindStart ()
 {
-	TUNameServer nameServer;
-	ULong id;
-	ULong spec;
 	HLOG (1, "TRFCOMMTool::BindStart\n");
-	TObjectId myPort;
-	NewtonErr r;
-	
-	r = nameServer.Lookup ("BluntServer", "TUPort", &id, &spec);
-	if (r == noErr) {
-		fServerPort = id;
-		fGetBuffer = NULL;
-		myPort = * (TObjectId*) ( (Byte*) this + 0x8c);
-		HLOG (1, "  Port: %04x, Server port: %04x\n", myPort, id);
-	} else {
-		printf ("Blunt server not running!\n");
-		r = kCommErrResourceNotAvailable;
-	}
-	
-	BindComplete (r);
+
+	BindComplete (noErr);
 }
 
 void TRFCOMMTool::ConnectStart ()
@@ -329,14 +331,12 @@ void TRFCOMMTool::SendPendingData ()
 void TRFCOMMTool::Log (int logLevel, char *format, ...)
 {
     va_list args;
-    char buffer[128];
     
     if (fLogLevel >= logLevel) {
         va_start (args, format);
-        vsprintf (buffer, format, args);
+        vsprintf ((char *) fLogBuffer, format, args);
         va_end (args);
-		fLogCommand.fData = (UByte *) buffer;
-		fLogCommand.fSize = strlen (buffer);
+		fLogCommand.fSize = strlen ((char *) fLogBuffer);
 		fServerPort.Send (&fLogCommand, sizeof (fLogCommand), kNoTimeout, M_COMMAND);
     }
 }
