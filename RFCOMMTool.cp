@@ -19,15 +19,12 @@ TRFCOMMTool::TRFCOMMTool (ULong serviceId): TCommTool (serviceId)
 	TObjectId myPort;
 	
 	fLogLevel = DEFAULT_LOGLEVEL;
-	fLogBuffer = new UByte[128];
-	fLogCommand.fData = fLogBuffer;
 
 	if (nameServer.Lookup ("BluntServer", "TUPort", &id, &spec) == noErr) {
 		fServerPort = id;
 		fGetBuffer = NULL;
 		myPort = * (TObjectId*) ( (Byte*) this + 0x8c);
-		HLOG (1, "-------------------------\nTRFCOMMTool 2\n");
-		HLOG (1, "  Port: %04x, Server port: %04x\n", myPort, id);
+		HLOG (0, "--------------------------------\nTRFCOMMTool::TRFCOMMTool\n  Port: %04x, Server port: %04x\n", myPort, id);
 	} else {
 		printf ("Blunt server not running!\n");
 		fServerPort = 0;
@@ -38,9 +35,8 @@ TRFCOMMTool::TRFCOMMTool (ULong serviceId): TCommTool (serviceId)
 
 TRFCOMMTool::~TRFCOMMTool (void)
 {
-	HLOG (1, "~TRFCOMMTool\n");
+	HLOG (0, "~TRFCOMMTool\n");
 	delete fSavedData;
-	delete fLogBuffer;
 }
 
 #pragma mark -
@@ -334,9 +330,9 @@ void TRFCOMMTool::Log (int logLevel, char *format, ...)
     
     if (fLogLevel >= logLevel) {
         va_start (args, format);
-        vsprintf ((char *) fLogBuffer, format, args);
+        vsprintf ((char *) fLogCommand.fData, format, args);
         va_end (args);
-		fLogCommand.fSize = strlen ((char *) fLogBuffer);
+		fLogCommand.fSize = strlen ((char *) fLogCommand.fData);
 		fServerPort.Send (&fLogCommand, sizeof (fLogCommand), kNoTimeout, M_COMMAND);
     }
 }

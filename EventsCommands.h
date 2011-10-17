@@ -334,10 +334,11 @@ public:
 class BluntLogCommand: public BluntCommand
 {
 public:
-	UByte				*fData;
+	UByte				fData[MAX_LOG];
 	ULong 				fSize;
 	
-						BluntLogCommand (UByte *data, ULong size): BluntCommand (C_LOG), fData (data), fSize (size) {}
+						BluntLogCommand (): BluntCommand (C_LOG), fSize (0) {}
+						BluntLogCommand (UByte *data, ULong size);
 	virtual	ULong		GetSizeOf (void) { return sizeof (*this); }
 };
 

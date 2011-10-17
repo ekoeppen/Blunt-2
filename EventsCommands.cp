@@ -63,3 +63,10 @@ BluntCommand::BluntCommand(BluntCommandType type)
 BluntCommand::~BluntCommand()
 {
 }
+
+BluntLogCommand::BluntLogCommand (UByte *data, ULong size):
+	BluntCommand (C_LOG)
+{
+	memcpy (fData, data, size);
+	fSize = size;
+}

@@ -4,6 +4,7 @@
 #define MAX_HANDLERS 32
 #define MAX_PACKETS 64
 #define MAX_MESSAGE 512
+#define MAX_LOG 100
 
 #define RFCOMM_MTU_LEN 128
 
