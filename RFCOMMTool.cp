@@ -84,7 +84,7 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 					if (e->fLength > 0 && e->fData != NULL) {
 						if (fGetBuffer != NULL) {
 							n = fGetBuffer->Putn (e->fData, e->fLength);
-							if (fGetBuffer->AtEOF ()) GetComplete (noErr);
+							GetComplete (noErr, false, fGetBuffer->Position ());
 							HLOG (1, "  Data received: %d returned: %d pos: %d eof: %d space: %d\n", e->fLength, n, fGetBuffer->Position (), fGetBuffer->AtEOF (), fGetBuffer->GetSize());
 							for (i = 0; i < e->fLength && i < 256; i++) {
 								HLOG (2, "%02x ", e->fData[i]);
