@@ -110,7 +110,10 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 						HLOG (1, "  %d bytes saved\n", fSavedDataAmount);
 						if (e->fDelete) delete e->fData;
 					}
-					GetComplete (noErr, false, fGetBuffer->Position ());
+					
+					if (fGetBuffer != NULL) {
+						GetComplete (noErr, false, fGetBuffer->Position ());
+					}
 				} else {
 					HLOG (1, "  Error %d\n", e->fResult);
 					GetComplete (e->fResult);
@@ -320,6 +323,7 @@ void TRFCOMMTool::GetBytesImmediate (CBufferList* clientBuffer, Size threshold)
 void TRFCOMMTool::GetComplete (NewtonErr result, Boolean endOfFrame, ULong getBytesCount)
 {
 	HLOG (1, "TRFCOMMTool::GetComplete %d %d %d\n", result, endOfFrame, getBytesCount);
+	fGetBuffer = NULL;
 	TCommTool::GetComplete (result, endOfFrame, getBytesCount);
 }
 
