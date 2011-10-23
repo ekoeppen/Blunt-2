@@ -51,7 +51,7 @@
 
 #define USE_CREDIT
 #define REMOTE_DEFAULT_CREDIT 7
-#define REMOTE_CREDIT_INCREASE 16
+#define REMOTE_CREDIT_INCREASE 7
 #define REMOTE_CREDIT_LOW 6
 
 enum {
@@ -581,6 +581,14 @@ int RFCOMM::ProcessRFCOMMData (void)
 		if (((fTotalBytesReceived + fInputPacketLength) / 1024) > (fTotalBytesReceived / 1024)) {
 			HLOG (1, " Total bytes received %d\n", fTotalBytesReceived);
 		}
+
+		HLOG (2, "%4d: ", fInputPacketLength);
+		for (i = 0; i < fInputPacketLength && i < 48; i++) {
+			HLOG (2, "%02x ", fInputPacket[i]);
+			if (((i + 1) % 16) == 0) HLOG (2, "\n      ");
+		}
+		HLOG (2, "\n");
+
 		fTotalBytesReceived += fInputPacketLength;
 		if (fTool) {
 			HLOG (1, "  Sending %d bytes to tool %08x\n", fInputPacketLength, fTool);

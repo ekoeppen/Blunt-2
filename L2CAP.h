@@ -4,7 +4,7 @@
 #include "BluntServer.h"
 #include "HCI.h"
 
-#define L2CAP_IN_MTU_LEN	 672
+#define L2CAP_IN_MTU_LEN	 490
 #define L2CAP_OUT_MTU_LEN	 490
 
 #define CID_NULL 		0x0000
