@@ -113,7 +113,7 @@ public:
 //	virtual void		 	OptionMgmt (TCommToolOptionMgmtRequest *);
 //	virtual ULong			ProcessOptions (TCommToolOptionInfo* option);
 	virtual NewtonErr		ProcessOptionStart (TOption* theOption, ULong label, ULong opcode);
-//	virtual void			ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode);
+	virtual void			ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode);
 //	virtual void			ProcessOption (TOption* theOption, ULong label, ULong opcode);
 
 	virtual	NewtonErr		PutBytes (CBufferList *);

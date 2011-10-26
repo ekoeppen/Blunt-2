@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <NewtonScript.h>
 
-
 extern "C" _sys_write (int fd, char* data, int len);
 
 TRFCOMMTool::TRFCOMMTool (ULong serviceId): TCommTool (serviceId)
@@ -193,6 +192,13 @@ NewtonErr TRFCOMMTool::ProcessOptionStart (TOption* theOption, ULong label, ULon
 		r = TCommTool::ProcessOptionStart (theOption, label, opcode);
 	}
 	return r;
+}
+
+void TRFCOMMTool::ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode)
+{
+	HLOG (1, "TRFCOMMTool::ProcessGetBytesOptionStart\n");
+
+	TCommTool::ProcessGetBytesOptionStart (theOption, label, opcode);
 }
 
 void TRFCOMMTool::BindStart ()
