@@ -8,6 +8,8 @@
 #include "L2CAP.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <NewtonScript.h>
+
 
 extern "C" _sys_write (int fd, char* data, int len);
 
@@ -17,14 +19,16 @@ TRFCOMMTool::TRFCOMMTool (ULong serviceId): TCommTool (serviceId)
 	ULong id;
 	ULong spec;
 	TObjectId myPort;
-	
-	fLogLevel = DEFAULT_LOGLEVEL;
+	RefVar logLevel;
+
+	logLevel = GetFrameSlot (GetVariable (GetFrameSlot (NSCallGlobalFn (SYM (GetGlobals)), SYM (blunt)), SYM (fLogLevel)), SYM (tool));
+	fLogLevel = RefToInt (logLevel);
 
 	if (nameServer.Lookup ("BluntServer", "TUPort", &id, &spec) == noErr) {
 		fServerPort = id;
 		fGetBuffer = NULL;
 		myPort = * (TObjectId*) ( (Byte*) this + 0x8c);
-		HLOG (0, "--------------------------------\nTRFCOMMTool::TRFCOMMTool\n  Port: %04x, Server port: %04x\n", myPort, id);
+		HLOG (0, "--------------------------------\nTRFCOMMTool::TRFCOMMTool\n  Port: %04x, Server port: %04x Log: %d\n", myPort, id, fLogLevel);
 	} else {
 		printf ("Blunt server not running!\n");
 		fServerPort = 0;
