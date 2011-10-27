@@ -430,8 +430,6 @@ void TRFCOMMTool::Log (int logLevel, char *format, ...)
     }
 }
 
-
-/*
 UByte* TRFCOMMTool::GetCommEvent()
 {
 	HLOG (1, "TRFCOMMTool::GetCommEvent\n");
@@ -479,4 +477,4 @@ void TRFCOMMTool::OptionMgmt (TCommToolOptionMgmtRequest *request)
 	HLOG (1, "TRFCOMMTool::OptionMgmt\n");
 	TCommTool::OptionMgmt (request);
 }
-*/
+
