@@ -100,21 +100,21 @@ public:
 	virtual UChar*			GetToolName() { return (UChar*) "TRFCommTool"; }
 
 	virtual NewtonErr		HandleRequest (TUMsgToken& msgToken, ULong msgType);
-//	virtual void			HandleReply (ULong userRefCon, ULong msgType);
-//	virtual void			DoControl (ULong opCode, ULong msgType);
-//	virtual void			DoStatus (unsigned long, unsigned long);
-//	virtual UByte*			GetCommEvent ();
+	virtual void			HandleReply (ULong userRefCon, ULong msgType);
+	virtual void			DoControl (ULong opCode, ULong msgType);
+	virtual void			DoStatus (unsigned long, unsigned long);
+	virtual UByte*			GetCommEvent ();
 
 	virtual void			BindStart (void);
 	virtual void			ConnectStart (void);
 	virtual void			ListenStart (void);
 	virtual void			AcceptStart (void);
 
-//	virtual void		 	OptionMgmt (TCommToolOptionMgmtRequest *);
-//	virtual ULong			ProcessOptions (TCommToolOptionInfo* option);
+	virtual void		 	OptionMgmt (TCommToolOptionMgmtRequest *);
+	virtual ULong			ProcessOptions (TCommToolOptionInfo* option);
 	virtual NewtonErr		ProcessOptionStart (TOption* theOption, ULong label, ULong opcode);
-//	virtual void			ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode);
-//	virtual void			ProcessOption (TOption* theOption, ULong label, ULong opcode);
+	virtual void			ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode);
+	virtual void			ProcessOption (TOption* theOption, ULong label, ULong opcode);
 
 	virtual	NewtonErr		PutBytes (CBufferList *);
 	virtual	NewtonErr		PutFramedBytes (CBufferList *, Boolean);

@@ -276,7 +276,7 @@ void TRFCOMMTool::KillPut (void)
 
 NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 {
-	HLOG (1, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
+	HLOG (0, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
 	Long n;
 
 	fGetBuffer = list;
@@ -303,8 +303,71 @@ NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 
 NewtonErr TRFCOMMTool::GetFramedBytes (CBufferList *)
 {
-	HLOG (1, "TRFCOMMTool::GetFramedBytes\n");
+	HLOG (0, "TRFCOMMTool::GetFramedBytes\n");
 	return noErr;
+}
+
+void TRFCOMMTool::HandleReply (ULong userRefCon, ULong msgType)
+{
+	HLOG (0, "TRFCOMMTool::HandleReply\n");
+	TCommTool::HandleReply (userRefCon, msgType);
+}
+
+void TRFCOMMTool::DoControl (ULong opCode, ULong msgType)
+{
+	HLOG (0, "TRFCOMMTool::DoControl 0x%x 0x%x %c\n", opCode, msgType, msgType);
+	TCommTool::DoControl (opCode, msgType);
+}
+
+void TRFCOMMTool::DoStatus (unsigned long a, unsigned long b)
+{
+	HLOG (0, "TRFCOMMTool::DoStatus\n");
+	TCommTool::DoStatus (a, b);
+}
+
+UByte* TRFCOMMTool::GetCommEvent ()
+{
+	HLOG (0, "TRFCOMMTool::GetCommEvent\n");
+	return TCommTool::GetCommEvent ();
+}
+
+void TRFCOMMTool::OptionMgmt (TCommToolOptionMgmtRequest *request)
+{
+	HLOG (0, "TRFCOMMTool::OptionMgmt\n");
+	TCommTool::OptionMgmt (request);
+}
+
+ULong TRFCOMMTool::ProcessOptions (TCommToolOptionInfo* option)
+{
+	ArrayIndex i;
+	
+	HLOG (0, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
+ 	if (option->fOptions) {
+		HLOG (0, "  %d: ", option->fOptions->GetArrayCount());
+		for (i = 0; i < option->fOptions->GetArrayCount(); i++) {
+			HLOG (0, "%04x ", option->fOptions->OptionAt (i)->Label ());
+		}
+		HLOG (0, "\n");
+	}
+	if (option->fOptionsIterator) {
+		HLOG (0, "  it: %d\n", option->fOptionsIterator->More ());
+	}
+	if (option->fCurOptPtr) {
+		HLOG (0, "  %c\n", option->fCurOptPtr->Label ());
+	}
+	TCommTool::ProcessOptions (option);
+}
+
+void TRFCOMMTool::ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode)
+{
+	HLOG (0, "TRFCOMMTool::ProcessGetBytesOptionStart %c\n", label);
+	TCommTool::ProcessGetBytesOptionStart (theOption, label, opcode);
+}
+
+void TRFCOMMTool::ProcessOption (TOption* theOption, ULong label, ULong opcode)
+{
+	HLOG (0, "TRFCOMMTool::ProcessOption %c\n", label);
+	TCommTool::ProcessOption (theOption, label, opcode);
 }
 
 /*
