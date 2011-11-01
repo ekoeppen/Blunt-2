@@ -122,9 +122,11 @@ public:
 
 	virtual	NewtonErr		GetBytes (CBufferList *);
 	virtual	NewtonErr		GetFramedBytes (CBufferList *);
-//	virtual void			GetBytesImmediate (CBufferList* clientBuffer, Size threshold);
+	virtual void			GetBytesImmediate (CBufferList* clientBuffer, Size threshold);
 	virtual void			GetComplete (NewtonErr result, Boolean endOfFrame = false, ULong getBytesCount = 0);
 	virtual	void			KillGet (void);
+
+	virtual void			GetOptionsComplete(NewtonErr);
 
 	virtual void			TerminateConnection (void);
 	virtual void			TerminateComplete (void);

@@ -115,7 +115,7 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 					}
 					
 					if (fGetBuffer != NULL) {
-						GetComplete (noErr, false, fGetBuffer->Position ());
+						GetComplete (noErr, true, fGetBuffer->Position ());
 					}
 				} else {
 					HLOG (1, "  Error %d\n", e->fResult);
@@ -275,7 +275,8 @@ void TRFCOMMTool::KillPut (void)
 
 NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 {
-	HLOG (1, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
+	HLOG (0, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
+	HLOG (0, "    %x %x %d %d\n", list, fGetBufferList, filler_01c6, filler_01c7);
 	Long n;
 
 	fGetBuffer = list;
@@ -289,7 +290,7 @@ NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 		}
 		fSavedDataAmount -= n;
 		if (n > 0 ) {
-			GetComplete (noErr, false, fGetBuffer->Position ());
+			GetComplete (noErr, true, fGetBuffer->Position ());
 		}
 	} else {
 		if (fGetBuffer->AtEOF ())  {
@@ -305,6 +306,13 @@ NewtonErr TRFCOMMTool::GetFramedBytes (CBufferList *)
 	HLOG (1, "TRFCOMMTool::GetFramedBytes\n");
 	return noErr;
 }
+
+void TRFCOMMTool::GetOptionsComplete (NewtonErr result)
+{
+	HLOG (0, "TRFCOMMTool::GetOptionsComplete: %d\n", result);
+	TCommTool::GetOptionsComplete (result);
+}
+
 
 void TRFCOMMTool::HandleReply (ULong userRefCon, ULong msgType)
 {
@@ -340,7 +348,7 @@ ULong TRFCOMMTool::ProcessOptions (TCommToolOptionInfo* option)
 {
 	ArrayIndex i;
 	
-	HLOG (1, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
+	HLOG (0, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
  	if (option->fOptions) {
 		HLOG (1, "  %d: ", option->fOptions->GetArrayCount());
 		for (i = 0; i < option->fOptions->GetArrayCount(); i++) {
@@ -365,16 +373,15 @@ void TRFCOMMTool::ProcessGetBytesOptionStart (TOption* theOption, ULong label, U
 
 void TRFCOMMTool::ProcessOption (TOption* theOption, ULong label, ULong opcode)
 {
-	HLOG (1, "TRFCOMMTool::ProcessOption %c\n", label);
+	HLOG (0, "TRFCOMMTool::ProcessOption %c\n", label);
 	TCommTool::ProcessOption (theOption, label, opcode);
 }
 
-/*
 void TRFCOMMTool::GetBytesImmediate (CBufferList* clientBuffer, Size threshold)
 {
 	Long n;
 
-	HLOG (1, "TRFCOMMTool::GetBytesImmediate (%d %d %d)\n", clientBuffer->GetSize(), threshold, fSavedDataAmount);
+	HLOG (0, "TRFCOMMTool::GetBytesImmediate (%d %d %d)\n", clientBuffer->GetSize(), threshold, fSavedDataAmount);
 	if (fSavedDataAmount > threshold) {
 		n = clientBuffer->Putn (fSavedData, threshold);
 		memcpy (fSavedData, fSavedData + n, fSavedDataAmount - n);
@@ -384,11 +391,10 @@ void TRFCOMMTool::GetBytesImmediate (CBufferList* clientBuffer, Size threshold)
 		GetComplete (noErr, false, 0);
 	}
 }
-*/
 
 void TRFCOMMTool::GetComplete (NewtonErr result, Boolean endOfFrame, ULong getBytesCount)
 {
-	HLOG (1, "TRFCOMMTool::GetComplete %d %d %d\n", result, endOfFrame, getBytesCount);
+	HLOG (0, "TRFCOMMTool::GetComplete %d %d %d\n", result, endOfFrame, getBytesCount);
 	fGetBuffer = NULL;
 	TCommTool::GetComplete (result, endOfFrame, getBytesCount);
 }
