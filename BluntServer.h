@@ -142,7 +142,6 @@ public:
 	UByte* 					fInputBuffer;
 	TUPort 					fPort;
 	TUAsyncMessage 			fIntMessage;
-	UByte					fRFCOMMSendBuffer[RFCOMM_MTU_LEN];
 	
 	UByte					fMessage[MAX_MESSAGE];
 	
