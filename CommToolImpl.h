@@ -42,13 +42,18 @@ public:
 public:
 	TCMOTransportInfo		fTransportInfo;			/* 0148 */
 	ULong					filler_0174;
-	TCommToolOptionInfo 	fOptionInfo_1;			/* 0178 */
-	TCommToolOptionInfo 	fOptionInfo_2;			/* 0190 */
-	TCommToolOptionInfo 	fOptionInfo_3;			/* 01a8 */
+	TCommToolOptionInfo 	fOpenOptionInfo;		/* 0178 */
+	TCommToolOptionInfo 	fGetOptionInfo;			/* 0190 */
+	TCommToolOptionInfo 	fPutOptionInfo;			/* 01a8 */
 	
 	ULong					filler_01c0;
-	ULong					filler_01c4;
-	ULong					filler_01c8;
+
+	UByte					filler_01c4;
+	UByte					filler_01c5;
+	UByte					filler_01c6;
+	UByte					filler_01c7;
+	
+	CBufferList*			fGetBufferList;
 	
 	Size					fTCommToolInputBufferSize;
 	
