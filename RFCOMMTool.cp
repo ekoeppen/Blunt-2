@@ -347,12 +347,21 @@ void TRFCOMMTool::OptionMgmt (TCommToolOptionMgmtRequest *request)
 ULong TRFCOMMTool::ProcessOptions (TCommToolOptionInfo* option)
 {
 	ArrayIndex i;
+	Char s[5];
+	ULong label;
 	
+<<<<<<< HEAD
 	HLOG (0, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
+=======
+	memset (s, 0, 5);
+	HLOG (1, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
+>>>>>>> e1db479a8d8d6fd6b0d7941de4a7958cb19abe4e
  	if (option->fOptions) {
 		HLOG (1, "  %d: ", option->fOptions->GetArrayCount());
 		for (i = 0; i < option->fOptions->GetArrayCount(); i++) {
-			HLOG (1, "%04x ", option->fOptions->OptionAt (i)->Label ());
+			label = option->fOptions->OptionAt (i)->Label ();
+			memcpy (s, &label, 4);
+			HLOG (1, "%s ", s);
 		}
 		HLOG (1, "\n");
 	}
@@ -360,20 +369,28 @@ ULong TRFCOMMTool::ProcessOptions (TCommToolOptionInfo* option)
 		HLOG (1, "  it: %d\n", option->fOptionsIterator->More ());
 	}
 	if (option->fCurOptPtr) {
-		HLOG (1, "  %c\n", option->fCurOptPtr->Label ());
+		label = option->fCurOptPtr->Label ();
+		memcpy (s, &label, 4);
+		HLOG (1, "  %s\n", s);
 	}
 	TCommTool::ProcessOptions (option);
 }
 
 void TRFCOMMTool::ProcessGetBytesOptionStart (TOption* theOption, ULong label, ULong opcode)
 {
-	HLOG (1, "TRFCOMMTool::ProcessGetBytesOptionStart %c\n", label);
+	Char s[5];
+
+	memcpy (s, &label, 4);
+	HLOG (1, "TRFCOMMTool::ProcessGetBytesOptionStart %s\n", s);
 	TCommTool::ProcessGetBytesOptionStart (theOption, label, opcode);
 }
 
 void TRFCOMMTool::ProcessOption (TOption* theOption, ULong label, ULong opcode)
 {
-	HLOG (0, "TRFCOMMTool::ProcessOption %c\n", label);
+	Char s[5];
+
+	memcpy (s, &label, 4);
+	HLOG (1, "TRFCOMMTool::ProcessOption %s\n", s);
 	TCommTool::ProcessOption (theOption, label, opcode);
 }
 
