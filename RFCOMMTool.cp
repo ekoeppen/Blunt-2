@@ -350,12 +350,8 @@ ULong TRFCOMMTool::ProcessOptions (TCommToolOptionInfo* option)
 	Char s[5];
 	ULong label;
 	
-<<<<<<< HEAD
-	HLOG (0, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
-=======
 	memset (s, 0, 5);
 	HLOG (1, "TRFCOMMTool::ProcessOptions %x\n", option->fOptionsState);
->>>>>>> e1db479a8d8d6fd6b0d7941de4a7958cb19abe4e
  	if (option->fOptions) {
 		HLOG (1, "  %d: ", option->fOptions->GetArrayCount());
 		for (i = 0; i < option->fOptions->GetArrayCount(); i++) {
