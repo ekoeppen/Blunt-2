@@ -83,11 +83,12 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 			case E_DATA: {
 				BluntDataEvent *e = (BluntDataEvent *) event;
 				Size n = 0;
+				HLOG (0, "TRFCOMMTool::HandleRequest E_DATA %d\n", e->fLength);
 				if (e->fResult == noErr) {
 					if (fSavedDataAmount > 0 && fGetBuffer != NULL) {
-						HLOG (0, "  First returning %d saved bytes", fSavedDataAmount);
+						HLOG (1, "  First returning %d saved bytes", fSavedDataAmount);
 						n = fGetBuffer->Putn (fSavedData, fSavedDataAmount);
-						HLOG (0, ": Returned %d of %d (pos %d)\n", n, fSavedDataAmount, fGetBuffer->Position ());
+						HLOG (1, ": Returned %d of %d (pos %d)\n", n, fSavedDataAmount, fGetBuffer->Position ());
 						if (fSavedDataAmount > n) {
 							HLOG (1, "  %d bytes still left\n", fSavedDataAmount - n);
 							memcpy (fSavedData, fSavedData + n, fSavedDataAmount - n);
@@ -99,7 +100,7 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 						n = 0;
 						if (fGetBuffer != NULL) {
 							n = fGetBuffer->Putn (e->fData, e->fLength);
-							HLOG (0, "  Data received: %d returned: %d pos: %d eof: %d space: %d\n", e->fLength, n, fGetBuffer->Position (), fGetBuffer->AtEOF (), fGetBuffer->GetSize());
+							HLOG (1, "  Data received: %d returned: %d pos: %d eof: %d space: %d\n", e->fLength, n, fGetBuffer->Position (), fGetBuffer->AtEOF (), fGetBuffer->GetSize());
 							for (i = 0; i < e->fLength && i < 48; i++) {
 								HLOG (2, "%02x ", e->fData[i]);
 								if (((i + 1 ) % 16) == 2) HLOG (2, "\n");
@@ -110,7 +111,7 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 							memcpy (fSavedData + fSavedDataAmount, e->fData + n, e->fLength - n);
 							fSavedDataAmount += (e->fLength - n);
 						}
-						HLOG (0, "  %d bytes saved\n", fSavedDataAmount);
+						HLOG (1, "  %d bytes saved\n", fSavedDataAmount);
 						if (e->fDelete) delete e->fData;
 					}
 					
@@ -275,7 +276,7 @@ void TRFCOMMTool::KillPut (void)
 
 NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 {
-	HLOG (1, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
+	HLOG (0, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
 	Long n;
 
 	fGetBuffer = list;
@@ -308,7 +309,30 @@ NewtonErr TRFCOMMTool::GetFramedBytes (CBufferList *)
 
 void TRFCOMMTool::GetOptionsComplete (NewtonErr result)
 {
+	ArrayIndex i;
+	Char s[5];
+	ULong label;
+	TCommToolOptionInfo *option = &fGetOptionInfo;
+	
+	memset (s, 0, 5);
 	HLOG (1, "TRFCOMMTool::GetOptionsComplete: %d\n", result);
+ 	if (option->fOptions) {
+		HLOG (0, "  %d: ", option->fOptions->GetArrayCount());
+		for (i = 0; i < option->fOptions->GetArrayCount(); i++) {
+			label = option->fOptions->OptionAt (i)->Label ();
+			memcpy (s, &label, 4);
+			HLOG (0, "%s ", s);
+		}
+		HLOG (0, "\n");
+	}
+	if (option->fOptionsIterator) {
+		HLOG (0, "  it: %d\n", option->fOptionsIterator->More ());
+	}
+	if (option->fCurOptPtr) {
+		label = option->fCurOptPtr->Label ();
+		memcpy (s, &label, 4);
+		HLOG (0, "  %s\n", s);
+	}
 	TCommTool::GetOptionsComplete (result);
 }
 
