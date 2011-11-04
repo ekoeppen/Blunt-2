@@ -83,7 +83,7 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 			case E_DATA: {
 				BluntDataEvent *e = (BluntDataEvent *) event;
 				Size n = 0;
-				HLOG (0, "TRFCOMMTool::HandleRequest E_DATA %d\n", e->fLength);
+				HLOG (0, "TRFCOMMTool::HandleRequest E_DATA %d | %02x %02x %02x\n", e->fLength, e->fData[e->fLength - 3], e->fData[e->fLength - 2], e->fData[e->fLength - 1]);
 				if (e->fResult == noErr) {
 					if (fSavedDataAmount > 0 && fGetBuffer != NULL) {
 						HLOG (1, "  First returning %d saved bytes", fSavedDataAmount);
@@ -276,7 +276,7 @@ void TRFCOMMTool::KillPut (void)
 
 NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 {
-	HLOG (0, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
+	HLOG (1, "TRFCOMMTool::GetBytes %d (pos %d), saved %d\n", list->GetSize (), list->Position (), fSavedDataAmount);
 	Long n;
 
 	fGetBuffer = list;
@@ -317,21 +317,21 @@ void TRFCOMMTool::GetOptionsComplete (NewtonErr result)
 	memset (s, 0, 5);
 	HLOG (1, "TRFCOMMTool::GetOptionsComplete: %d\n", result);
  	if (option->fOptions) {
-		HLOG (0, "  %d: ", option->fOptions->GetArrayCount());
+		HLOG (1, "  %d: ", option->fOptions->GetArrayCount());
 		for (i = 0; i < option->fOptions->GetArrayCount(); i++) {
 			label = option->fOptions->OptionAt (i)->Label ();
 			memcpy (s, &label, 4);
-			HLOG (0, "%s ", s);
+			HLOG (1, "%s ", s);
 		}
-		HLOG (0, "\n");
+		HLOG (1, "\n");
 	}
 	if (option->fOptionsIterator) {
-		HLOG (0, "  it: %d\n", option->fOptionsIterator->More ());
+		HLOG (1, "  it: %d\n", option->fOptionsIterator->More ());
 	}
 	if (option->fCurOptPtr) {
 		label = option->fCurOptPtr->Label ();
 		memcpy (s, &label, 4);
-		HLOG (0, "  %s\n", s);
+		HLOG (1, "  %s\n", s);
 	}
 	TCommTool::GetOptionsComplete (result);
 }
@@ -422,7 +422,7 @@ void TRFCOMMTool::GetBytesImmediate (CBufferList* clientBuffer, Size threshold)
 
 void TRFCOMMTool::GetComplete (NewtonErr result, Boolean endOfFrame, ULong getBytesCount)
 {
-	HLOG (0, "TRFCOMMTool::GetComplete %d %d %d\n", result, endOfFrame, getBytesCount);
+	HLOG (1, "TRFCOMMTool::GetComplete %d %d %d\n", result, endOfFrame, getBytesCount);
 	fGetBuffer = NULL;
 	TCommTool::GetComplete (result, endOfFrame, getBytesCount);
 }
