@@ -595,7 +595,11 @@ int RFCOMM::ProcessRFCOMMData (void)
 			BluntDataEvent *e;
 			TUPort p (fTool);
 			ULong n;
-			e = new BluntDataEvent (noErr, fInputPacket, fInputPacketLength, this);
+			e = new BluntDataEvent (noErr, NULL, 0, this);
+			e->fDelete = true;
+			e->fData = new UByte[fInputPacketLength];
+			memcpy (e->fData, fInputPacket, fInputPacketLength);
+			e->fLength = fInputPacketLength;
 			p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
 			HLOG (1, "  Data sent.\n", fTool);
 		}
