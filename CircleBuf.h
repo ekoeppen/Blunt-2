@@ -6,6 +6,7 @@
 
 #define kBufferUnderrun 2
 #define kBufferOverrun 3
+#define kMarkerOverrun 4
 
 class TCircleBuf
 {
@@ -19,12 +20,12 @@ public:
 	Long Reset ();
 	Long ResetStart ();
 	Long CopyOut (CBufferList *, ULong *, ULong *);
-	Long CopyOut (UByte *, ULong *, ULong *);
+	Long CopyOut (UByte *data, ULong *requestedSize, ULong *);
 	Long CopyIn (CBufferList *, ULong *);
-	Long CopyIn (UByte *, ULong *, Boolean, ULong);
+	Long CopyIn (UByte *data, ULong *size, Boolean setMarker, ULong);
 	Long GetNextByte (UByte *);
 	Long Allocate (ULong);
-	Long Allocate (ULong, int, UChar, UChar);
+	Long Allocate (ULong size, int markerSpace, UChar field_1, UChar field_2);
 	Long GetNextByte (UByte *, ULong *);
 	Long PeekNextByte (UByte *);
 	Long PeekNextByte (UByte *, ULong *);
@@ -66,17 +67,21 @@ public:
 	ULong fStart;									/* 0008 */
 	ULong fNext;									/* 000c */
 	
-	ULong filler_0010;
+	UByte filler_0010;
+	UByte filler_0011;
+	UByte filler_0012;
+	UByte filler_0013;
 	
-	UByte filler_0014;
+	UByte fField_1;
 	UByte filler_0015;
+	UByte filler_0016;
+	UByte filler_0017;
+
+	ULong fMarkerSize;								/* 0018 */
+	ULong *fMarkers;
 	
-	ULong filler_0018;
-	
-	ULong fCount;									/* 001c */
-	
-	ULong filler_0020;
-	ULong filler_0024;
+	ULong fNextEOMIndex;							/* 0020 */
+	ULong fLastEOMIndex;
 };
 
 class TExtendedCircleBuf: public TCircleBuf

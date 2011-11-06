@@ -40,6 +40,9 @@ public:
 	
 	CBufferList				*fSendData;
 	
+	TCircleBuf				fReceiveBuffer;
+	BluntDataEvent			fDataEvent;
+	
 	UByte					fCRCTable[256];
 
 							RFCOMM (void);

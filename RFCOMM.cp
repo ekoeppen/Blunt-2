@@ -54,6 +54,8 @@
 #define REMOTE_CREDIT_INCREASE 7
 #define REMOTE_CREDIT_LOW 6
 
+#define MAX_RECEIVE_BUFFER 1024
+
 enum {
 	RFCOMM_ANY,
 	RFCOMM_MPX_CONNECT,
@@ -121,10 +123,13 @@ RFCOMM::RFCOMM (void)
 	fBlockedByLowCredit = 0;
 	fLengthToConfirm = 0;
 	fSendData = nil;
+	fReceiveBuffer.Allocate (MAX_RECEIVE_BUFFER);
+	fDataEvent.fBuffer = &fReceiveBuffer;
 }
 	
 RFCOMM::~RFCOMM (void)
 {
+	fReceiveBuffer.Deallocate ();
 }
 	
 #pragma mark -
@@ -565,6 +570,7 @@ int RFCOMM::ProcessRFCOMMData (void)
 {
 	Short len;
 	int r, i;
+	ULong n;
 
 	HLOG (1, "RFCOMM::ProcessRFCOMMData %d\n", fInputPacketLength);
 	r = noErr;
@@ -592,11 +598,10 @@ int RFCOMM::ProcessRFCOMMData (void)
 		fTotalBytesReceived += fInputPacketLength;
 		if (fTool) {
 			HLOG (1, "  Sending %d bytes to tool %08x\n", fInputPacketLength, fTool);
-			BluntDataEvent *e;
 			TUPort p (fTool);
-			ULong n;
-			e = new BluntDataEvent (noErr, fInputPacket, fInputPacketLength, this);
-			p.Send ((TUAsyncMessage *) e, e, sizeof (BluntDataEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
+			n = fInputPacketLength;
+			fReceiveBuffer.CopyIn (fInputPacket, &n, false, 0);
+			p.Send ((TUAsyncMessage *) &fDataEvent, &fDataEvent, sizeof (BluntDataEvent), kNoTimeout, nil, BLUNT_MSG_TYPE);
 			HLOG (1, "  Data sent.\n", fTool);
 		}
 	}

@@ -161,12 +161,12 @@ class BluntDataEvent: public BluntEvent
 {
 public:
 	UByte			*fData;
-	Long			fLength;
-	Boolean			fDelete;
+	TCircleBuf		*fBuffer;
 	Handler			*fHandler;
 	
-					BluntDataEvent (NewtonErr result, UByte *data, Long len, Handler *handler):
-						BluntEvent (E_DATA, result), fDelete (false), fData (data), fLength (len), fHandler (handler) {}
+					BluntDataEvent (void): BluntEvent (E_DATA, noErr) {}
+					BluntDataEvent (NewtonErr result, TCircleBuf *buffer, Handler *handler):
+						BluntEvent (E_DATA, result), fBuffer (buffer), fHandler (handler) {}
 	virtual	ULong	GetSizeOf (void) { return sizeof (*this); }
 };
 

@@ -82,37 +82,14 @@ NewtonErr TRFCOMMTool::HandleRequest (TUMsgToken& msgToken, ULong msgType)
 				} break;
 			case E_DATA: {
 				BluntDataEvent *e = (BluntDataEvent *) event;
-				Size n = 0;
-				HLOG (0, "TRFCOMMTool::HandleRequest E_DATA %d\n", e->fLength);
+				ULong n = 0, m = 0;
+				HLOG (0, "TRFCOMMTool::HandleRequest E_DATA %d\n", e->fBuffer->BufferCount ());
 				if (e->fResult == noErr) {
-					if (fSavedDataAmount > 0 && fGetBuffer != NULL) {
-						HLOG (1, "  First returning %d saved bytes", fSavedDataAmount);
-						n = fGetBuffer->Putn (fSavedData, fSavedDataAmount);
-						HLOG (1, ": Returned %d of %d (pos %d)\n", n, fSavedDataAmount, fGetBuffer->Position ());
-						if (fSavedDataAmount > n) {
-							HLOG (1, "  %d bytes still left\n", fSavedDataAmount - n);
-							memcpy (fSavedData, fSavedData + n, fSavedDataAmount - n);
-						}
-						fSavedDataAmount -= n;
-					}
-
-					if (e->fLength > 0 && e->fData != NULL) {
-						n = 0;
-						if (fGetBuffer != NULL) {
-							n = fGetBuffer->Putn (e->fData, e->fLength);
-							HLOG (1, "  Data received: %d returned: %d pos: %d eof: %d space: %d\n", e->fLength, n, fGetBuffer->Position (), fGetBuffer->AtEOF (), fGetBuffer->GetSize());
-							for (i = 0; i < e->fLength && i < 48; i++) {
-								HLOG (2, "%02x ", e->fData[i]);
-								if (((i + 1 ) % 16) == 2) HLOG (2, "\n");
-							}
-							HLOG (2, "\n");
-						}
-						if (e->fLength > n) {
-							memcpy (fSavedData + fSavedDataAmount, e->fData + n, e->fLength - n);
-							fSavedDataAmount += (e->fLength - n);
-						}
-						HLOG (1, "  %d bytes saved\n", fSavedDataAmount);
-						if (e->fDelete) delete e->fData;
+					n = 0;
+					if (fGetBuffer != NULL) {
+						n = fGetBuffer->GetSize() - fGetBuffer->Position ();
+						e->fBuffer->CopyOut (fGetBuffer, &n, &m);
+						HLOG (1, "  Space left: %d pos: %d eof: %d space: %d\n", n, fGetBuffer->Position (), fGetBuffer->AtEOF (), fGetBuffer->GetSize());
 					}
 					
 					if (fGetBuffer != NULL) {
@@ -280,23 +257,9 @@ NewtonErr TRFCOMMTool::GetBytes (CBufferList *list)
 	Long n;
 
 	fGetBuffer = list;
-	if (fSavedDataAmount > 0) {
-		HLOG (1, "  Returning %d saved bytes", fSavedDataAmount);
-		n = fGetBuffer->Putn (fSavedData, fSavedDataAmount);
-		HLOG (1, ": Returned %d of %d (pos %d)\n", n, fSavedDataAmount, fGetBuffer->Position ());
-		if (fSavedDataAmount > n) {
-			HLOG (1, "  %d bytes still left\n", fSavedDataAmount - n);
-			memcpy (fSavedData, fSavedData + n, fSavedDataAmount - n);
-		}
-		fSavedDataAmount -= n;
-		if (n > 0 ) {
-			GetComplete (noErr, true, fGetBuffer->Position ());
-		}
-	} else {
-		if (fGetBuffer->AtEOF ())  {
-			HLOG (1, "  Get complete\n");
-			GetComplete (noErr);
-		}
+	if (fGetBuffer->AtEOF ())  {
+		HLOG (1, "  Get complete\n");
+		GetComplete (noErr);
 	}
 	return noErr;
 }
