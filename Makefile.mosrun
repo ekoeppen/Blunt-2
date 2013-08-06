@@ -1,5 +1,5 @@
 NCT_ROOT = ::NCT_Projects:
-NCT_LIBRARIES = $(NCT_ROOT)Libraries:
+NCT_Libraries = $(NCT_ROOT)Libraries:
 DDK_Includes-dir = $(NCT_ROOT)DDKIncludes:
 NCT_Includes = $(NCT_ROOT)Includes:
 NCT-ARMCpp-options = -fa -fc -fq -fy '-w+g' -wp -zo -d forARM
@@ -46,7 +46,7 @@ CPPFLAGS = $(NCT-ARMCpp-options) -W -gf -d forDebug \
 	-i "$(NCT_Includes)Frames:" \
 	-i "$(NCT_Includes)Utilities:"
 	
-ASFLAGS = "$(NCT-asm-options)"
+ASFLAGS = $(NCT-asm-options)
 
 PACKERFLAGS = -packageid 'rfcm' -version 1 -copyright 2005
 
@@ -73,10 +73,10 @@ $(AIFFILE) : $(OBJS)
 %.ntkc : %.aif
 	$(AIF_TO_NTK) -via $(EXPORTS) -o $@ $<
 	
-%.impl.a	: %.impl.h
-	ProtocolGen -ImplementationGlue $< -package $(CPPFLAGS) -stdout > $@
-%.a : %.h
-	ProtocolGen -InterfaceGlue $< $(CPPFLAGS) $$(CPlusIncludes) -stdout > $@
+#%.impl.a	: %.impl.h
+#	ProtocolGenTool -ImplementationGlue $< -package $(CPPFLAGS) -stdout > $@
+#%.a : %.h
+#	ProtocolGenTool -InterfaceGlue $< $(CPPFLAGS) $$(CPlusIncludes) -stdout > $@
 
 # --- Other stuff -------------------------------------------------------------------
 

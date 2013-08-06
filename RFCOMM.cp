@@ -73,7 +73,7 @@ enum {
 	A_MPX_CONNECT_ERROR,
 	A_RESEND_DATA_CONNECT,
 	A_MPX_MSC,
-	A_DATA_CONTINUED,		/* 10 */
+	A_DATA_CONTINUED		/* 10 */
 };
 
 static const int kStates[][4] = {
