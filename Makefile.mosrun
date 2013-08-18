@@ -1,12 +1,13 @@
 NCT_ROOT = ::NCT_Projects:
 NCT_Libraries = $(NCT_ROOT)Libraries:
+NS_And_DDK_Includes-dir = $(NCT_ROOT)NSandDDKIncludes:
 DDK_Includes-dir = $(NCT_ROOT)DDKIncludes:
 NCT_Includes = $(NCT_ROOT)Includes:
 NCT-ARMCpp-options = -fa -fc -fq -fy '-w+g' -wp -zo -d forARM
 NCT-ARMc-options = -ansic -fa -fc -fq -fy '-w+g' -wp -zo -d forARM
 NCT-link-options = -dsuppress -remove -aif -bin
 NCT-asm-options =
-EXPORTS = Exports.exp
+EXPORTS = Exports.exp.main.o
 OBJS = Main.o BluntServer.o BluntClient.o HCI.o L2CAP.o SDP.o RFCOMM.o EventsCommands.o Logger.o
 HDRS = BluntClient.h CircleBuf.h EventsCommands.h Logger.h RFCOMMTool.h \
     BluntServer.h CommToolImpl.h HCI.h RFCOMM.h SDP.h \
@@ -31,6 +32,7 @@ SETFILE = /Developer/Tools/SetFile
 
 LDFLAGS = $(NCT-link-options) -rel -debug
 CPPFLAGS = $(NCT-ARMCpp-options) -W -gf -d forDebug \
+	-i "$(NS_And_DDK_Includes-dir)" \
 	-i "$(DDK_Includes-dir)" \
 	-i "$(DDK_Includes-dir)CLibrary:" \
 	-i "$(DDK_Includes-dir)CommAPI:" \
@@ -64,9 +66,6 @@ $(AIFFILE) : $(OBJS)
 %.a : %.cp
 	$(CPP) $(CPPFLAGS) -S -o $*.a $<
 	
-%.a : %.exp
-	$(NCT_BUILD_MAIN) $< $*.a
-
 %.o : %.a
 	$(AS) $(ASFLAGS) $*.a -o $*.o
 	

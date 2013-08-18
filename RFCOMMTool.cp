@@ -21,7 +21,7 @@ TRFCOMMTool::TRFCOMMTool (ULong serviceId): TCommTool (serviceId)
 	RefVar logLevel;
 
 	logLevel = GetFrameSlot (GetVariable (GetFrameSlot (NSCallGlobalFn (SYM (GetGlobals)), SYM (blunt)), SYM (fLogLevel)), SYM (tool));
-	fLogLevel = RefToInt (logLevel);
+	fLogLevel = RINT (logLevel);
 
 	if (nameServer.Lookup ("BluntServer", "TUPort", &id, &spec) == noErr) {
 		fServerPort = id;

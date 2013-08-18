@@ -1,3 +1,4 @@
+#include <NSandDDKIncludes.h>
 #include <HALOptions.h>
 #include <SerialChipRegistry.h>
 #include "BluntServer.h"
@@ -18,11 +19,11 @@ extern "C" Ref MStart (RefArg rcvr, RefArg location, RefArg driver, RefArg speed
 	END_WITH_LOCKED_BINARY(location);
 
 	server = new BluntServer ();
-	if (server->Initialize (l, RefToInt (driver), RefToInt (speed), RefToInt (logLevel)) == noErr) {
+	if (server->Initialize (l, RINT (driver), RINT (speed), RINT (logLevel)) == noErr) {
 		server->StartTask ();
-		SetFrameSlot (rcvr, SYM (server), MakeInt ((ULong) server));
+		SetFrameSlot (rcvr, SYM (server), MAKEINT ((ULong) server));
 		client = new BluntClient (rcvr, BluntServer::Port ());
-		SetFrameSlot (rcvr, SYM (client), MakeInt ((ULong) client));
+		SetFrameSlot (rcvr, SYM (client), MAKEINT ((ULong) client));
 		return TRUEREF;
 	} else {
 		delete server;
@@ -35,7 +36,7 @@ extern "C" Ref MReset (RefArg rcvr, RefArg name)
 	Char buffer[64];
 	Ref asciiName;
 	
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	asciiName = ASCIIString (name);
 	WITH_LOCKED_BINARY(asciiName, n)
 	memset (buffer, 0, 64);
@@ -47,33 +48,33 @@ extern "C" Ref MReset (RefArg rcvr, RefArg name)
 
 extern "C" Ref MDiscover (RefArg rcvr, RefArg time, RefArg amount)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
-	client->Discover (RefToInt (time), RefToInt (amount));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
+	client->Discover (RINT (time), RINT (amount));
 	return NILREF;
 }
 
 extern "C" Ref MCancelDiscover (RefArg rcvr)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	client->CancelDiscover ();
 	return NILREF;
 }
 
 extern "C" Ref MNameRequest (RefArg rcvr, RefArg bdAddr, RefArg psRepMode, RefArg psMode)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	WITH_LOCKED_BINARY(bdAddr, a)
-	client->NameRequest ((UByte*) a, RefToInt (psRepMode), RefToInt (psMode));
+	client->NameRequest ((UByte*) a, RINT (psRepMode), RINT (psMode));
 	END_WITH_LOCKED_BINARY(bdAddr)
 	return NILREF;
 }
 
 extern "C" Ref MGetServices (RefArg rcvr, RefArg bdAddr, RefArg psRepMode, RefArg psMode, RefArg linkKey)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	WITH_LOCKED_BINARY(linkKey, k)
 	WITH_LOCKED_BINARY(bdAddr, a)
-	client->GetServices ((UByte*) a, RefToInt (psRepMode), RefToInt (psMode), (UByte *) k);
+	client->GetServices ((UByte*) a, RINT (psRepMode), RINT (psMode), (UByte *) k);
 	END_WITH_LOCKED_BINARY(bdAddr)
 	END_WITH_LOCKED_BINARY(linkKey)
 	return NILREF;
@@ -81,10 +82,10 @@ extern "C" Ref MGetServices (RefArg rcvr, RefArg bdAddr, RefArg psRepMode, RefAr
 
 extern "C" Ref MConnect (RefArg rcvr, RefArg bdAddr, RefArg psRepMode, RefArg psMode, RefArg port, RefArg linkKey)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	WITH_LOCKED_BINARY(linkKey, k)
 	WITH_LOCKED_BINARY(bdAddr, a)
-	client->Connect ((UByte*) a, RefToInt (psRepMode), RefToInt (psMode), RefToInt (port), (UByte *) k);
+	client->Connect ((UByte*) a, RINT (psRepMode), RINT (psMode), RINT (port), (UByte *) k);
 	END_WITH_LOCKED_BINARY(bdAddr)
 	END_WITH_LOCKED_BINARY(linkKey)
 	return NILREF;
@@ -92,7 +93,7 @@ extern "C" Ref MConnect (RefArg rcvr, RefArg bdAddr, RefArg psRepMode, RefArg ps
 
 extern "C" Ref MDisconnect (RefArg rcvr, RefArg bdAddr)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	WITH_LOCKED_BINARY(bdAddr, a)
 	client->Disconnect ((UByte*) a);
 	END_WITH_LOCKED_BINARY(bdAddr)
@@ -104,14 +105,14 @@ extern "C" Ref MPair (RefArg rcvr, RefArg bdAddr, RefArg PIN, RefArg psRepMode, 
 	Char buffer[64];
 	Ref asciiPIN;
 	
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	asciiPIN = ASCIIString (PIN);
 	WITH_LOCKED_BINARY(asciiPIN, p)
 	memset (buffer, 0, 64);
 	memcpy (buffer, p, Length (asciiPIN));
 	END_WITH_LOCKED_BINARY(asciiPIN)
 	WITH_LOCKED_BINARY(bdAddr, a)
-	client->Pair ((UByte*) a, buffer, RefToInt (psRepMode), RefToInt (psMode));
+	client->Pair ((UByte*) a, buffer, RINT (psRepMode), RINT (psMode));
 	END_WITH_LOCKED_BINARY(bdAddr)
 	return NILREF;
 }
@@ -122,8 +123,8 @@ extern "C" Ref MStop (RefArg rcvr)
 	BluntClient* client = NULL;
 	TUPort port;
 	
-	client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
-	server = (BluntServer*) RefToInt (GetFrameSlot(rcvr, SYM (server)));
+	client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
+	server = (BluntServer*) RINT (GetFrameSlot(rcvr, SYM (server)));
 	client->Stop ();
 	
 	Sleep(1 * kSeconds);
@@ -138,21 +139,21 @@ extern "C" Ref MStop (RefArg rcvr)
 
 extern "C" Ref MStatus (RefArg rcvr)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	client->Status ();
 	return NILREF;
 }
 
 extern "C" Ref MSetLogLevel (RefArg rcvr, RefArg levels)
 {
-	BluntClient* client = (BluntClient*) RefToInt (GetFrameSlot(rcvr, SYM (client)));
+	BluntClient* client = (BluntClient*) RINT (GetFrameSlot(rcvr, SYM (client)));
 	client->SetLogLevel (
-		RefToInt (GetFrameSlot(levels, SYM (client))),
-		RefToInt (GetFrameSlot(levels, SYM (server))),
-		RefToInt (GetFrameSlot(levels, SYM (hci))),
-		RefToInt (GetFrameSlot(levels, SYM (l2cap))),
-		RefToInt (GetFrameSlot(levels, SYM (sdp))),
-		RefToInt (GetFrameSlot(levels, SYM (rfcomm))));
+		RINT (GetFrameSlot(levels, SYM (client))),
+		RINT (GetFrameSlot(levels, SYM (server))),
+		RINT (GetFrameSlot(levels, SYM (hci))),
+		RINT (GetFrameSlot(levels, SYM (l2cap))),
+		RINT (GetFrameSlot(levels, SYM (sdp))),
+		RINT (GetFrameSlot(levels, SYM (rfcomm))));
 	return NILREF;
 }
 

@@ -1,3 +1,4 @@
+#include <NSandDDKIncludes.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -150,11 +151,11 @@ void BluntClient::SendInquiryInfo (BluntInquiryResultEvent* event)
 		memcpy (a, event->fBdAddr, 6);
 		END_WITH_LOCKED_BINARY(addr);
 		SetFrameSlot (device, SYM (fBdAddr), addr);
-		SetFrameSlot (device, SYM (fClass), MakeInt ((event->fClass[0] << 16) + (event->fClass[1] << 8) + event->fClass[2]));
-		SetFrameSlot (device, SYM (fClockOffset), MakeInt ((event->fClockOffset[0] << 8) + event->fClockOffset[1]));
-		SetFrameSlot (device, SYM (fPSRepMode), MakeInt (event->fPSRepMode));
-		SetFrameSlot (device, SYM (fPSPeriodMode), MakeInt (event->fPSPeriodMode));
-		SetFrameSlot (device, SYM (fPSMode), MakeInt (event->fPSMode));
+		SetFrameSlot (device, SYM (fClass), MAKEINT ((event->fClass[0] << 16) + (event->fClass[1] << 8) + event->fClass[2]));
+		SetFrameSlot (device, SYM (fClockOffset), MAKEINT ((event->fClockOffset[0] << 8) + event->fClockOffset[1]));
+		SetFrameSlot (device, SYM (fPSRepMode), MAKEINT (event->fPSRepMode));
+		SetFrameSlot (device, SYM (fPSPeriodMode), MAKEINT (event->fPSPeriodMode));
+		SetFrameSlot (device, SYM (fPSMode), MAKEINT (event->fPSMode));
 		NSSendIfDefined (*fBlunt, SYM (MInquiryCallback), device);
 	} else {
 		NSSendIfDefined (*fBlunt, SYM (MInquiryCallback), NILREF);
@@ -197,15 +198,15 @@ void BluntClient::SendServiceInfo (BluntServiceResultEvent* event)
 	
 	HLOG (1, "BluntClient::SendServiceInfo %d\n", event->fResult);
 	service = AllocateFrame ();
-	SetFrameSlot (service, SYM (fResult), MakeInt (event->fResult));
+	SetFrameSlot (service, SYM (fResult), MAKEINT (event->fResult));
 	if (event->fResult == noErr) {
 		addr = AllocateBinary (SYM (binary), 6);
 		WITH_LOCKED_BINARY(addr, a)
 		memcpy (a, event->fBdAddr, 6);
 		END_WITH_LOCKED_BINARY(addr);
 		SetFrameSlot (service, SYM (fBdAddr), addr);
-		SetFrameSlot (service, SYM (fService), MakeInt (event->fServiceUUID));
-		SetFrameSlot (service, SYM (fPort), MakeInt (event->fServicePort));
+		SetFrameSlot (service, SYM (fService), MAKEINT (event->fServiceUUID));
+		SetFrameSlot (service, SYM (fPort), MAKEINT (event->fServicePort));
 	}
 	NSSendIfDefined (*fBlunt, SYM (MServicesCallback), service);
 }
@@ -232,7 +233,7 @@ void BluntClient::Status ()
 void BluntClient::SendStatusInfo (BluntStatusEvent* event)
 {
 	HLOG (0, "BluntClient::SendStatusInfo %d\n", event->fResult);
-	NSSendIfDefined (*fBlunt, SYM (MStatusCallback), MakeInt (event->fResult));
+	NSSendIfDefined (*fBlunt, SYM (MStatusCallback), MAKEINT (event->fResult));
 }
 
 void BluntClient::Log (int logLevel, char *format, ...)
