@@ -7,7 +7,7 @@ NCT-ARMCpp-options = -fa -fc -fq -fy '-w+g' -wp -zo -d forARM
 NCT-ARMc-options = -ansic -fa -fc -fq -fy '-w+g' -wp -zo -d forARM
 NCT-link-options = -dsuppress -remove -aif -bin
 NCT-asm-options =
-EXPORTS = Exports.exp.main.o
+EXPORTS = Exports.exp
 OBJS = Main.o BluntServer.o BluntClient.o HCI.o L2CAP.o SDP.o RFCOMM.o EventsCommands.o Logger.o
 HDRS = BluntClient.h CircleBuf.h EventsCommands.h Logger.h RFCOMMTool.h \
     BluntServer.h CommToolImpl.h HCI.h RFCOMM.h SDP.h \
@@ -19,7 +19,7 @@ MODULE = BluntServer.ntkc
 # --- Generic rules ----------------------------------------------------------------
 
 AIFFILE = $(MODULE:.ntkc=.aif)
-OBJS += $(EXPORTS:.exp=.o)
+OBJS += $(EXPORTS:.exp=.exp.main.o)
 	
 CPP = ARMCpp
 CC = ARM6c
