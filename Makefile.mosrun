@@ -1,6 +1,5 @@
 NCT_ROOT = ::NCT_Projects:
 NCT_Libraries = $(NCT_ROOT)Libraries:
-NS_And_DDK_Includes-dir = $(NCT_ROOT)NSandDDKIncludes:
 DDK_Includes-dir = $(NCT_ROOT)DDKIncludes:
 NCT_Includes = $(NCT_ROOT)Includes:
 NCT-ARMCpp-options = -fa -fc -fq -fy '-w+g' -wp -zo -d forARM
@@ -32,7 +31,6 @@ SETFILE = /Developer/Tools/SetFile
 
 LDFLAGS = $(NCT-link-options) -rel -debug
 CPPFLAGS = $(NCT-ARMCpp-options) -W -gf -d forDebug \
-	-i "$(NS_And_DDK_Includes-dir)" \
 	-i "$(DDK_Includes-dir)" \
 	-i "$(DDK_Includes-dir)CLibrary:" \
 	-i "$(DDK_Includes-dir)CommAPI:" \
@@ -82,7 +80,6 @@ $(AIFFILE) : $(OBJS)
 BluntTool.pkg: RFCOMMService.o RFCOMMTool.o RelocHack.o RFCOMMService.impl.o EventsCommands.o
 	$(LD) $(LDFLAGS) -o BluntTool.bin $+ $(LIBS)
 	$(PACKER) -o $@ BluntTool $(PACKERFLAGS)  -protocol -aif BluntTool.bin -autoLoad -autoRemove
-	$(SETFILE) -t "pkg " -c "pkgX" $@
 
 # $(NCT-link) {NCT-link-options} -dupok -o :Objects:TRFCOMMToolMP2100D.bin ":{NCT-ObjectOut}:RelocHack.a.o" ":{NCT-ObjectOut}:THCILayer.cp.o" ":{NCT-ObjectOut}:TL2CAPLayer.cp.o" ":{NCT-ObjectOut}:TSDPLayer.cp.o" ":{NCT-ObjectOut}:TRFCOMMLayer.cp.o" ":{NCT-ObjectOut}:TRFCOMMTool.cp.o" ":{NCT-ObjectOut}:TRFCOMMService.cp.o" ":{NCT-ObjectOut}:TRFCOMMService.impl.h.o" "{NCT_Libraries}MP2100D.a.o"
 # "$(NCT-packer)" -o BluntMP2100D.pkg "Blunt" {NCT-packer-options} -packageid 'rfcm' -copyright 'Copyright (c) 2003 Eckhart Kšppen' -version 01 ¶

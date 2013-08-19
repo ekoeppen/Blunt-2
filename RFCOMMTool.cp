@@ -1,14 +1,15 @@
 #define DEFAULT_LOGLEVEL 0
 
+#include <stdarg.h>
+#include <stdio.h>
+#include "NSandDDKIncludes.h"
+#include <NewtonScript.h>
 #include "RelocHack.h"
 #include "CommToolImpl.h"
 #include "RFCOMMTool.h"
 #include "BluntServer.h"
 #include "HCI.h"
 #include "L2CAP.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <NewtonScript.h>
 
 extern "C" _sys_write (int fd, char* data, int len);
 

@@ -1,6 +1,6 @@
-#include <NSandDDKIncludes.h>
 #include <HALOptions.h>
 #include <SerialChipRegistry.h>
+#include "NSandDDKIncludes.h"
 #include "BluntServer.h"
 #include "BluntClient.h"
 #include "CircleBuf.h"
